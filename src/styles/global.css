@@ -59,7 +59,10 @@ html.home-document {
   animation: none;
 }
 
-
+::view-transition-old(site-header),
+::view-transition-new(site-header) {
+  animation: none;
+}
 body {
 	min-height: 100vh;
 	margin: 0;

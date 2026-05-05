@@ -61,11 +61,15 @@ const navItems = [
 				background: #C8392B;
 				border: 2px solid rgba(255, 255, 255, 0.9);
 			}
+
+			.site-header {
+				view-transition-name: site-header;
+			}
 		</style>
 	</head>
 
 	<body class={bodyClass}>
-		<header class="site-header site-header--topbar" data-site-header transition:persist>
+		<header class="site-header site-header--topbar" data-site-header>
 			<a class="site-logo" href="/" aria-label="Tangoren Holf home">
 				<img src={headerLogoSrc} alt="Tangoren Holf" width="600" height="600" />
 			</a>
@@ -86,13 +90,15 @@ const navItems = [
 			</nav>
 		</div>
 
-		<main transition:animate={fade({ duration: 400 })}>
-			<slot />
-		</main>
+		<div transition:animate={fade({ duration: 400 })}>
+			<main>
+				<slot />
+			</main>
 
-		<footer class="site-footer" transition:persist>
-			<p>&copy;2024 TANGOREN HOLF. All rights reserved.</p>
-		</footer>
+			<footer class="site-footer">
+				<p>&copy;2024 TANGOREN HOLF. All rights reserved.</p>
+			</footer>
+		</div>
 
 		<script>
 			import Lenis from "lenis";
