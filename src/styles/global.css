@@ -59,12 +59,6 @@ html.home-document {
   animation: none;
 }
 
-::view-transition-old(site-header),
-::view-transition-new(site-header),
-::view-transition-old(site-footer),
-::view-transition-new(site-footer) {
-  animation: none;
-}
 
 body {
 	min-height: 100vh;
@@ -131,14 +125,14 @@ main {
 	background: var(--color-primary);
 	border-bottom: 1px solid rgba(26, 26, 26, 0.28);
 	color: var(--color-secondary);
-	transition: background 0ms ease;
+	transition: background-color 220ms ease;
 }
 
 .home-page .site-header {
 	background: transparent;
 	border-bottom-color: rgba(255, 255, 255, 0.72);
 	color: #FFFFFF;
-	transition: background 0ms ease;
+	transition: background-color 220ms ease;
 }
 
 .site-header.is-scrolled,

@@ -61,18 +61,11 @@ const navItems = [
 				background: #C8392B;
 				border: 2px solid rgba(255, 255, 255, 0.9);
 			}
-
-			.site-header {
-				view-transition-name: site-header;
-			}
-			.site-footer {
-				view-transition-name: site-footer;
-			}
 		</style>
 	</head>
 
 	<body class={bodyClass}>
-		<header class="site-header site-header--topbar" data-site-header>
+		<header class="site-header site-header--topbar" data-site-header transition:persist>
 			<a class="site-logo" href="/" aria-label="Tangoren Holf home">
 				<img src={headerLogoSrc} alt="Tangoren Holf" width="600" height="600" />
 			</a>
@@ -97,7 +90,7 @@ const navItems = [
 			<slot />
 		</main>
 
-		<footer class="site-footer">
+		<footer class="site-footer" transition:persist>
 			<p>&copy;2024 TANGOREN HOLF. All rights reserved.</p>
 		</footer>
 
