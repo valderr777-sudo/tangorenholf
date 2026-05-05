@@ -131,14 +131,14 @@ main {
 	background: var(--color-primary);
 	border-bottom: 1px solid rgba(26, 26, 26, 0.28);
 	color: var(--color-secondary);
-	transition: background 620ms ease;
+	transition: background 0ms ease;
 }
 
 .home-page .site-header {
 	background: transparent;
 	border-bottom-color: rgba(255, 255, 255, 0.72);
 	color: #FFFFFF;
-	transition: background 2000ms ease;
+	transition: background 600ms ease;
 }
 
 .site-header.is-scrolled,
@@ -496,20 +496,13 @@ p {
 
 .services-grid__heading {
 	max-width: none;
-	margin: 0 0 0;
+	margin: 0 0 clamp(24px, 3vh, 40px);
 	font-size: clamp(1.25rem, 2vw, 1.55rem);
 	font-weight: 400;
 	letter-spacing: 0.2em;
 	line-height: 1.2;
 	text-align: center;
 	text-transform: uppercase;
-}
-
-.services-grid__divider {
-	width: 60px;
-	height: 1px;
-	margin: clamp(16px, 2vh, 24px) auto clamp(40px, 5vh, 64px);
-	background: var(--color-secondary);
 }
 
 .services-grid__items {
@@ -521,7 +514,7 @@ p {
 .services-grid__item {
 	display: flex;
 	gap: 12px;
-	padding: clamp(14px, 1.8vh, 20px) 0;
+	padding: clamp(10px, 1.2vh, 16px) 0;
 	border-bottom: 1px solid rgba(26, 26, 26, 0.18);
 }
 
