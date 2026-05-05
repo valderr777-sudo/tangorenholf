@@ -1,0 +1,198 @@
+---
+import "../styles/global.css";
+import { ClientRouter, fade } from "astro:transitions";
+
+interface Props {
+	title?: string;
+	description?: string;
+	bodyClass?: string;
+}
+
+const {
+	title = "Tangoren Holf",
+	description = "Tangoren Holf is an art consulting firm.",
+	bodyClass = "",
+} = Astro.props;
+
+const htmlClass = bodyClass.split(" ").includes("home-page") ? "home-document" : "";
+const isHomePage = bodyClass.split(" ").includes("home-page");
+const headerLogoSrc = isHomePage ? "/images/logo-th-main.png" : "/favicon.svg";
+
+const navItems = [
+	{ href: "/about", label: "ABOUT" },
+	{ href: "/client-services", label: "CLIENT SERVICES" },
+	{ href: "/collections", label: "COLLECTIONS" },
+	{ href: "/the-wall", label: "THE WALL" },
+	{ href: "/contact", label: "CONTACT" },
+];
+---
+
+<!doctype html>
+<html lang="en" class={htmlClass}>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content={description} />
+		<meta name="generator" content={Astro.generator} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title transition:animate="none">{title}</title>
+		<ClientRouter />
+		<style is:inline>
+			@font-face {
+				font-family: 'Century Gothic';
+				font-display: block;
+			}
+
+			html {
+				scrollbar-color: #C8392B rgba(26, 26, 26, 0.08);
+				scrollbar-width: thin;
+			}
+
+			::-webkit-scrollbar {
+				width: 8px;
+				height: 8px;
+			}
+
+			::-webkit-scrollbar-track {
+				background: rgba(26, 26, 26, 0.08);
+			}
+
+			::-webkit-scrollbar-thumb {
+				background: #C8392B;
+				border: 2px solid rgba(255, 255, 255, 0.9);
+			}
+
+			.site-header {
+				view-transition-name: site-header;
+			}
+			.site-footer {
+				view-transition-name: site-footer;
+			}
+		</style>
+	</head>
+
+	<body class={bodyClass}>
+		<header class="site-header site-header--topbar" data-site-header>
+			<a class="site-logo" href="/" aria-label="Tangoren Holf home">
+				<img src={headerLogoSrc} alt="Tangoren Holf" width="600" height="600" />
+			</a>
+
+			<nav class="desktop-nav" aria-label="Primary navigation">
+				{navItems.map((item) => <a href={item.href}>{item.label}</a>)}
+			</nav>
+
+			<button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" data-menu-toggle>
+				<span></span>
+				<span></span>
+			</button>
+		</header>
+
+		<div class="mobile-menu" data-mobile-menu>
+			<nav aria-label="Mobile navigation">
+				{navItems.map((item) => <a href={item.href}>{item.label}</a>)}
+			</nav>
+		</div>
+
+		<main transition:animate={fade({ duration: 400 })}>
+			<slot />
+		</main>
+
+		<footer class="site-footer">
+			<p>&copy;2024 TANGOREN HOLF. All rights reserved.</p>
+		</footer>
+
+		<script>
+			import Lenis from "lenis";
+
+			let lenis = null;
+			let lenisFrame = null;
+
+			const initLenis = () => {
+				if (document.body.classList.contains("home-page")) return;
+				if (lenis) {
+					lenis.destroy();
+					lenis = null;
+				}
+
+				lenis = new Lenis({
+					duration: 1.2,
+					easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+					orientation: "vertical",
+					smoothWheel: true,
+				});
+
+				const raf = (time) => {
+					if (!lenis) return;
+					lenis.raf(time);
+					lenisFrame = requestAnimationFrame(raf);
+				};
+				lenisFrame = requestAnimationFrame(raf);
+			};
+
+			const destroyLenis = () => {
+				if (lenisFrame) {
+					cancelAnimationFrame(lenisFrame);
+					lenisFrame = null;
+				}
+				if (lenis) {
+					lenis.destroy();
+					lenis = null;
+				}
+			};
+
+			const syncHeader = () => {
+				const header = document.querySelector("[data-site-header]");
+				header?.classList.toggle("is-scrolled", window.scrollY > 24);
+			};
+
+			const updateLogo = () => {
+				const logoImg = document.querySelector(".site-logo img");
+				if (!logoImg) return;
+				const isHome = document.body.classList.contains("home-page");
+				logoImg.src = isHome ? "/images/logo-th-main.png" : "/favicon.svg";
+			};
+
+			const closeMenu = () => {
+				const toggle = document.querySelector("[data-menu-toggle]");
+				document.body.classList.remove("menu-open");
+				toggle?.setAttribute("aria-expanded", "false");
+				toggle?.setAttribute("aria-label", "Open menu");
+			};
+
+			const initMenu = () => {
+				const toggle = document.querySelector("[data-menu-toggle]");
+				const mobileMenu = document.querySelector("[data-mobile-menu]");
+
+				if (toggle instanceof HTMLElement && !toggle.dataset.menuReady) {
+					toggle.dataset.menuReady = "true";
+					toggle.addEventListener("click", () => {
+						const isOpen = document.body.classList.toggle("menu-open");
+						toggle.setAttribute("aria-expanded", String(isOpen));
+						toggle.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
+					});
+				}
+
+				mobileMenu?.querySelectorAll("a").forEach((link) => {
+					if (link instanceof HTMLElement && !link.dataset.menuReady) {
+						link.dataset.menuReady = "true";
+						link.addEventListener("click", closeMenu);
+					}
+				});
+			};
+
+			const initPage = () => {
+				closeMenu();
+				syncHeader();
+				updateLogo();
+				initMenu();
+				initLenis();
+			};
+
+			window.addEventListener("scroll", syncHeader, { passive: true });
+			document.addEventListener("astro:page-load", initPage);
+			initPage();
+
+			document.addEventListener("astro:before-preparation", destroyLenis);
+		</script>
+	</body>
+</html>

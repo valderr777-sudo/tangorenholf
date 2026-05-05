@@ -1,0 +1,56 @@
+backend:
+  name: git-gateway
+  branch: main
+
+local_backend: true
+
+media_folder: public/uploads
+public_folder: /uploads
+
+site_url: /
+display_url: /
+logo_url: /favicon.svg
+
+collections:
+  - name: pages
+    label: Pages
+    files:
+      - name: about
+        label: About
+        file: src/pages/about.astro
+        editor:
+          preview: false
+        fields:
+          - { label: Body, name: body, widget: code, default_language: html }
+      - name: client_services
+        label: Client Services
+        file: src/pages/client-services.astro
+        editor:
+          preview: false
+        fields:
+          - { label: Body, name: body, widget: code, default_language: html }
+      - name: contact
+        label: Contact
+        file: src/pages/contact.astro
+        editor:
+          preview: false
+        fields:
+          - { label: Body, name: body, widget: code, default_language: html }
+
+  - name: galleries
+    label: Galleries
+    files:
+      - name: collections
+        label: Collections
+        file: src/pages/collections.astro
+        editor:
+          preview: false
+        fields:
+          - { label: Gallery Markup, name: body, widget: code, default_language: html }
+      - name: the_wall
+        label: The Wall
+        file: src/pages/the-wall.astro
+        editor:
+          preview: false
+        fields:
+          - { label: Gallery Markup, name: body, widget: code, default_language: html }

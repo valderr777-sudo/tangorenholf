@@ -1,0 +1,48 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const services = [
+	"Onsite Consultation and Assessments",
+	"Collection Inventory Development",
+	"Market Analysis",
+	"Curatorial Work",
+	"Art Research and Procurement",
+	"Detailed Location Planning",
+	"Discuss Budgetary Requirements",
+	"Collaboration with Established and Emerging Artists",
+	"Commissions",
+	"Dealer Negotiation",
+	"Auction Representation",
+	"Liaison with Architects, Interior Designers and Art Handlers",
+	"Conservation and Preservation of Art and Historic Works Advice",
+	"Guidance with Custom Framing and Display",
+	"Delivery and Installation",
+	"Transportation Logistics",
+	"Insurance",
+	"Donation",
+	"Complete Turnkey Services",
+	"Lighting Systems to Illuminate and Display Artwork",
+	"VIP Tours of Art Galleries and Artist Studios",
+];
+---
+
+<BaseLayout title="Client Services | Tangoren Holf">
+	<section class="services-page">
+		<div class="services-grid">
+			<h1 class="services-grid__heading">CLIENT SERVICES</h1>
+			<div class="services-grid__divider"></div>
+
+			<div class="services-grid__items">
+				{services.map((service, i) => {
+					const num = String(i + 1).padStart(2, "0");
+					return (
+						<div class="services-grid__item">
+							<span class="services-grid__number">{num}</span>
+							<span class="services-grid__text">{service}</span>
+						</div>
+					);
+				})}
+			</div>
+		</div>
+	</section>
+</BaseLayout>
