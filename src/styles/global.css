@@ -138,7 +138,7 @@ main {
 	background: transparent;
 	border-bottom-color: rgba(255, 255, 255, 0.72);
 	color: #FFFFFF;
-	transition: background 600ms ease;
+	transition: background 0ms ease;
 }
 
 .site-header.is-scrolled,
