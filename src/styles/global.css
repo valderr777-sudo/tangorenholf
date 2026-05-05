@@ -131,14 +131,14 @@ main {
 	background: var(--color-primary);
 	border-bottom: 1px solid rgba(26, 26, 26, 0.28);
 	color: var(--color-secondary);
-	transition: background-color 620ms ease;
+	transition: background 620ms ease;
 }
 
 .home-page .site-header {
 	background: transparent;
 	border-bottom-color: rgba(255, 255, 255, 0.72);
 	color: #FFFFFF;
-	transition: background-color 2000ms ease;
+	transition: background 2000ms ease;
 }
 
 .site-header.is-scrolled,
