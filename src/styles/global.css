@@ -13,7 +13,7 @@
 	--color-secondary: #1A1A1A;
 	--color-accent: #C8392B;
 	--color-neutral: #F2F2F2;
-	--color-overlay: rgba(0, 0, 0, 0.28);
+	--color-overlay: rgba(0, 0, 0, 0.18);
 	--font-sans: "Century Gothic", "AppleGothic", sans-serif;
 }
 
@@ -125,30 +125,36 @@ main {
 	height: 90px;
 	min-height: 90px;
 	padding: 0 clamp(28px, 5vw, 72px);
-	background: var(--color-primary);
+	background: transparent;
 	border-bottom: 1px solid rgba(26, 26, 26, 0.28);
 	color: var(--color-secondary);
-	transition: background-color 220ms ease;
+	transition: backdrop-filter 220ms ease, -webkit-backdrop-filter 220ms ease;
 }
 
 .home-page .site-header {
 	background: transparent;
 	border-bottom-color: rgba(255, 255, 255, 0.72);
 	color: #FFFFFF;
-	transition: background-color 220ms ease;
+	transition: backdrop-filter 220ms ease, -webkit-backdrop-filter 220ms ease;
 }
 
 .site-header.is-scrolled,
 body.menu-open .site-header {
-	background: var(--color-primary);
+	background: rgba(255, 255, 255, 0.6);
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(12px);
 }
 
 .home-page .site-header.is-scrolled {
 	background: transparent;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 }
 
 .home-page.menu-open .site-header {
 	background: transparent;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 }
 
 .site-logo {
@@ -488,7 +494,7 @@ p {
 }
 
 .services-grid {
-	width: min(100%, 940px);
+	width: 100%;
 }
 
 .services-grid__heading {
@@ -516,7 +522,7 @@ p {
 }
 
 .services-grid__number {
-	font-size: 0.65rem;
+	font-size: 1rem;
 	font-weight: 300;
 	letter-spacing: 0.1em;
 	line-height: 1.6;
@@ -529,7 +535,7 @@ p {
 	font-size: clamp(0.85rem, 1vw, 0.95rem);
 	font-weight: 400;
 	letter-spacing: 0;
-	line-height: 1.5;
+	line-height: 1.6;
 }
 
 .collection-gallery {
@@ -599,7 +605,7 @@ p {
 }
 
 .contact-heading {
-	margin: 0 0 clamp(36px, 5vh, 64px);
+	margin: 0 0 clamp(12px, 2vh, 24px);
 	font-size: clamp(1.25rem, 2vw, 1.55rem);
 	font-weight: 400;
 	letter-spacing: 0.2em;
@@ -610,19 +616,19 @@ p {
 
 .contact-form {
 	display: grid;
-	gap: 32px;
+	gap: clamp(16px, 2.5vh, 24px);
 	width: min(100%, 760px);
 }
 
 .contact-form__row {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap: 32px;
+	gap: clamp(12px, 2vw, 24px);
 }
 
 .contact-form__field {
 	display: grid;
-	gap: 6px;
+	gap: 0px;
 }
 
 .contact-form__field--full {
@@ -638,7 +644,7 @@ p {
 .contact-form__field input,
 .contact-form__field textarea {
 	width: 100%;
-	padding: 12px 0;
+	padding: 4px 0;
 	background: transparent;
 	border: 0;
 	border-bottom: 1px solid rgba(26, 26, 26, 0.42);
