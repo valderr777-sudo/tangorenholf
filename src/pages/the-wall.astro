@@ -1,17 +1,463 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const wallEntries = await getCollection("wall");
+const sorted = wallEntries.sort((a, b) => {
+	const numA = parseInt(a.id.replace(/\.md$/, ""), 10);
+	const numB = parseInt(b.id.replace(/\.md$/, ""), 10);
+	return numA - numB;
+});
 ---
 
 <BaseLayout title="The Wall | Tangoren Holf">
 	<section class="collection-gallery wall-gallery" aria-label="The Wall gallery">
-		<img src="https://static.wixstatic.com/media/934aa2_7ffbc55113c241469d072ddf18da3f6c~mv2.jpg" alt="Tangoren Holf wall installation" />
-		<img src="https://static.wixstatic.com/media/934aa2_a3c2adbdc4e042d8a20dc02149b85701~mv2.jpg" alt="Tangoren Holf wall installation" />
-		<img src="https://static.wixstatic.com/media/934aa2_72f91a69592341ad9efbc7ff1584b7a7~mv2.jpg" alt="Tangoren Holf wall installation" />
-		<img src="https://static.wixstatic.com/media/934aa2_a3c2adbdc4e042d8a20dc02149b85701~mv2.jpg" alt="Tangoren Holf wall installation" />
-		<img src="https://static.wixstatic.com/media/934aa2_72f91a69592341ad9efbc7ff1584b7a7~mv2.jpg" alt="Tangoren Holf wall installation" />
-		<img src="https://static.wixstatic.com/media/934aa2_7ffbc55113c241469d072ddf18da3f6c~mv2.jpg" alt="Tangoren Holf wall installation" />
-		<img src="https://static.wixstatic.com/media/934aa2_72f91a69592341ad9efbc7ff1584b7a7~mv2.jpg" alt="Tangoren Holf wall installation" />
-		<img src="https://static.wixstatic.com/media/934aa2_7ffbc55113c241469d072ddf18da3f6c~mv2.jpg" alt="Tangoren Holf wall installation" />
-		<img src="https://static.wixstatic.com/media/934aa2_a3c2adbdc4e042d8a20dc02149b85701~mv2.jpg" alt="Tangoren Holf wall installation" />
+		{sorted.map((entry, index) => (
+			<button
+				type="button"
+				class="wall-thumb"
+				data-wall-index={index}
+				data-wall-image={entry.data.image}
+				data-wall-title={entry.data.title}
+				data-wall-description={entry.data.description}
+			>
+				<img src={entry.data.image} alt={entry.data.title} loading="lazy" />
+				<div class="sr-only">{entry.data.description}</div>
+			</button>
+		))}
 	</section>
+
+	<style is:global>
+		.wall-thumb {
+			display: block;
+			width: 100%;
+			padding: 0;
+			border: 0;
+			background: none;
+			cursor: pointer;
+		}
+
+		.wall-thumb img {
+			display: block;
+			width: 100%;
+			aspect-ratio: 3 / 4;
+			object-fit: cover;
+			background: var(--color-neutral, #f2f2f2);
+		}
+
+		.sr-only {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0, 0, 0, 0);
+			white-space: nowrap;
+			border: 0;
+		}
+
+		/* Lightbox overlay */
+		.wall-lightbox {
+			position: fixed;
+			inset: 0;
+			z-index: 9999;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: rgba(255, 255, 255, 0.97);
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 300ms ease;
+			padding: 24px;
+		}
+
+		.wall-lightbox.is-open {
+			opacity: 1;
+			pointer-events: auto;
+		}
+
+		/* Close button */
+		.wall-lightbox-close {
+			position: absolute;
+			top: 16px;
+			right: 16px;
+			z-index: 10;
+			width: 40px;
+			height: 40px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: #ffffff;
+			border: 1px solid rgba(26, 26, 26, 0.18);
+			cursor: pointer;
+			font-size: 1.2rem;
+			color: #1a1a1a;
+			transition: background 180ms ease;
+		}
+
+		.wall-lightbox-close:hover {
+			background: #f2f2f2;
+		}
+
+		.wall-lightbox-inner {
+			display: flex;
+			gap: 32px;
+			max-width: 1100px;
+			width: 100%;
+			max-height: 90vh;
+			align-items: center;
+		}
+
+		.wall-lightbox-image {
+			flex: 1 1 60%;
+			min-width: 0;
+			max-height: 85vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+		}
+
+		.wall-lightbox-image img {
+			display: block;
+			width: 100%;
+			height: auto;
+			max-height: 85vh;
+			object-fit: contain;
+			border-radius: 0;
+		}
+
+		.wall-lightbox-info {
+			flex: 1 1 40%;
+			min-width: 0;
+			background: #ffffff;
+			padding: 40px 32px;
+			display: flex;
+			flex-direction: column;
+			gap: 24px;
+			max-height: 85vh;
+			overflow-y: auto;
+			border: 1px solid rgba(26, 26, 26, 0.1);
+		}
+
+		.wall-lightbox-info .description {
+			font-family: "Century Gothic", "AppleGothic", sans-serif;
+			font-size: 0.95rem;
+			font-weight: 400;
+			line-height: 1.7;
+			color: #1a1a1a;
+			white-space: pre-line;
+			margin: 0;
+		}
+
+		.wall-lightbox-info .inquire-btn {
+			display: inline-block;
+			align-self: flex-start;
+			padding: 10px 28px;
+			background: #c8392b;
+			color: #ffffff;
+			font-family: "Century Gothic", "AppleGothic", sans-serif;
+			font-size: 0.75rem;
+			font-weight: 400;
+			letter-spacing: 0.25em;
+			text-transform: uppercase;
+			text-decoration: none;
+			border: 0;
+			cursor: pointer;
+			transition: background 180ms ease;
+		}
+
+		.wall-lightbox-info .inquire-btn:hover {
+			background: #a82f24;
+		}
+
+		/* Bottom nav in info panel */
+		.wall-lightbox-info .nav-row {
+			display: flex;
+			gap: 12px;
+			align-items: center;
+			margin-top: auto;
+			padding-top: 16px;
+			border-top: 1px solid rgba(26, 26, 26, 0.1);
+		}
+
+		.wall-lightbox-info .nav-row button {
+			padding: 6px 16px;
+			background: transparent;
+			border: 1px solid rgba(26, 26, 26, 0.18);
+			cursor: pointer;
+			font-family: "Century Gothic", "AppleGothic", sans-serif;
+			font-size: 0.7rem;
+			font-weight: 400;
+			letter-spacing: 0.2em;
+			text-transform: uppercase;
+			color: #1a1a1a;
+			transition: background 180ms ease;
+		}
+
+		.wall-lightbox-info .nav-row button:hover {
+			background: #f2f2f2;
+		}
+
+		.wall-lightbox-info .nav-row button:disabled {
+			opacity: 0.3;
+			cursor: default;
+			background: transparent;
+		}
+
+		.wall-lightbox-info .nav-row .counter {
+			font-size: 0.75rem;
+			color: rgba(26, 26, 26, 0.5);
+			letter-spacing: 0.1em;
+		}
+
+		@media (max-width: 768px) {
+			.wall-lightbox-inner {
+				flex-direction: column;
+				gap: 16px;
+			}
+
+			.wall-lightbox-image {
+				flex: none;
+				width: 100%;
+				max-height: 50vh;
+			}
+
+			.wall-lightbox-image img {
+				max-height: 50vh;
+			}
+
+			.wall-lightbox-info {
+				flex: none;
+				width: 100%;
+				padding: 24px 20px;
+				max-height: 40vh;
+			}
+		}
+	</style>
+
+	<script>
+		interface WallItem {
+			image: string;
+			title: string;
+			description: string;
+		}
+
+		interface LightboxState {
+			overlay: HTMLDivElement | null;
+			isOpen: boolean;
+			items: WallItem[];
+			currentIndex: number;
+		}
+
+		let state: LightboxState = {
+			overlay: null,
+			isOpen: false,
+			items: [],
+			currentIndex: 0,
+		};
+
+		const createLightbox = (): HTMLDivElement => {
+			const overlay = document.createElement("div");
+			overlay.className = "wall-lightbox";
+			overlay.setAttribute("role", "dialog");
+			overlay.setAttribute("aria-modal", "true");
+			overlay.setAttribute("aria-label", "Image lightbox");
+
+			overlay.innerHTML = `
+				<button class="wall-lightbox-close" type="button" aria-label="Close lightbox">✕</button>
+				<div class="wall-lightbox-inner">
+					<div class="wall-lightbox-image">
+						<img src="" alt="" />
+					</div>
+					<div class="wall-lightbox-info">
+						<p class="description"></p>
+						<a class="inquire-btn" href="mailto:art@tangorenholf.com">Inquire</a>
+						<div class="nav-row">
+							<button class="prev-btn" type="button">Prev</button>
+							<span class="counter"></span>
+							<button class="next-btn" type="button">Next</button>
+						</div>
+					</div>
+				</div>
+			`;
+
+			document.body.appendChild(overlay);
+			state.overlay = overlay;
+			return overlay;
+		};
+
+		const getOrCreateOverlay = (): HTMLDivElement => {
+			if (state.overlay && document.body.contains(state.overlay)) {
+				return state.overlay;
+			}
+			return createLightbox();
+		};
+
+		const updateLightboxContent = () => {
+			const overlay = state.overlay;
+			if (!overlay) return;
+
+			const item = state.items[state.currentIndex];
+			if (!item) return;
+
+			const img = overlay.querySelector(".wall-lightbox-image img") as HTMLImageElement;
+			const desc = overlay.querySelector(".wall-lightbox-info .description") as HTMLElement;
+			const counter = overlay.querySelector(".nav-row .counter") as HTMLElement;
+			const prevBtn = overlay.querySelector(".nav-row .prev-btn") as HTMLButtonElement;
+			const nextBtn = overlay.querySelector(".nav-row .next-btn") as HTMLButtonElement;
+
+			img.src = item.image;
+			img.alt = item.title;
+			desc.textContent = item.description;
+			counter.textContent = `${state.currentIndex + 1} / ${state.items.length}`;
+
+			const isFirst = state.currentIndex === 0;
+			const isLast = state.currentIndex === state.items.length - 1;
+			prevBtn.disabled = isFirst;
+			nextBtn.disabled = isLast;
+		};
+
+		const getScrollbarWidth = (): number => {
+			return window.innerWidth - document.documentElement.clientWidth;
+		};
+
+		const openLightbox = (index: number) => {
+			if (state.items.length === 0) return;
+			state.currentIndex = index;
+			const overlay = getOrCreateOverlay();
+			updateLightboxContent();
+
+			// Compensate for scrollbar disappearance to prevent layout shift
+			const scrollbarWidth = getScrollbarWidth();
+			if (scrollbarWidth > 0) {
+				document.body.style.paddingRight = `${scrollbarWidth}px`;
+			}
+			document.body.style.overflow = "hidden";
+
+			// Trigger reflow for transition
+			void overlay.offsetWidth;
+			overlay.classList.add("is-open");
+			state.isOpen = true;
+		};
+
+		const closeLightbox = () => {
+			if (!state.overlay || !state.isOpen) return;
+			state.overlay.classList.remove("is-open");
+			state.isOpen = false;
+			document.body.style.overflow = "";
+			document.body.style.paddingRight = "";
+
+			// Clear image and description after fade-out transition completes
+			state.overlay.addEventListener("transitionend", () => {
+				if (!state.overlay?.classList.contains("is-open")) {
+					const img = state.overlay.querySelector(".wall-lightbox-image img") as HTMLImageElement;
+					if (img) img.src = "";
+					const desc = state.overlay.querySelector(".wall-lightbox-info .description") as HTMLElement;
+					if (desc) desc.textContent = "";
+				}
+			}, { once: true });
+		};
+
+		const goPrev = () => {
+			if (state.currentIndex > 0) {
+				state.currentIndex--;
+				updateLightboxContent();
+			}
+		};
+
+		const goNext = () => {
+			if (state.currentIndex < state.items.length - 1) {
+				state.currentIndex++;
+				updateLightboxContent();
+			}
+		};
+
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if (!state.isOpen) return;
+			if (e.key === "Escape") {
+				closeLightbox();
+			} else if (e.key === "ArrowLeft") {
+				goPrev();
+			} else if (e.key === "ArrowRight") {
+				goNext();
+			}
+		};
+
+		const initWall = () => {
+			// Collect all items from the DOM
+			const thumbs = document.querySelectorAll<HTMLButtonElement>(".wall-thumb");
+			state.items = [];
+			thumbs.forEach((btn) => {
+				state.items.push({
+					image: btn.dataset.wallImage || "",
+					title: btn.dataset.wallTitle || "Untitled",
+					description: btn.dataset.wallDescription || "",
+				});
+			});
+
+			// Event delegation on the gallery section
+			const gallery = document.querySelector(".wall-gallery");
+			if (gallery && !gallery.dataset.wallReady) {
+				gallery.dataset.wallReady = "true";
+				gallery.addEventListener("click", (e) => {
+					const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".wall-thumb");
+					if (!btn) return;
+					const index = parseInt(btn.dataset.wallIndex || "0", 10);
+					openLightbox(index);
+				});
+			}
+
+			// Lightbox internal event listeners (attached once)
+			if (!document.body.dataset.wallListeners) {
+				document.body.dataset.wallListeners = "true";
+
+				document.addEventListener("keydown", handleKeyDown);
+
+				document.addEventListener("click", (e) => {
+					if (!state.isOpen || !state.overlay) return;
+
+					const target = e.target as HTMLElement;
+
+					// Close button
+					if (target.closest(".wall-lightbox-close")) {
+						closeLightbox();
+						return;
+					}
+
+					// Backdrop click
+					if (target === state.overlay) {
+						closeLightbox();
+						return;
+					}
+
+					// Prev/Next from nav-row
+					if (target.closest(".nav-row .prev-btn")) {
+						goPrev();
+						return;
+					}
+					if (target.closest(".nav-row .next-btn")) {
+						goNext();
+						return;
+					}
+				});
+			}
+		};
+
+		const cleanupWall = () => {
+			if (state.overlay && document.body.contains(state.overlay)) {
+				document.body.removeChild(state.overlay);
+			}
+			state.overlay = null;
+			state.isOpen = false;
+			state.items = [];
+			state.currentIndex = 0;
+			document.body.style.overflow = "";
+			document.body.style.paddingRight = "";
+		};
+
+		document.addEventListener("astro:page-load", initWall);
+		document.addEventListener("astro:before-preparation", cleanupWall);
+	</script>
 </BaseLayout>
