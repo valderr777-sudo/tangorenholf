@@ -65,6 +65,12 @@ const navItems = [
 			.site-header {
 				view-transition-name: site-header;
 			}
+			.site-header.is-scrolled,
+			body.menu-open .site-header {
+				background: rgba(255, 255, 255, 0.6);
+				backdrop-filter: blur(6px);
+				-webkit-backdrop-filter: blur(6px);
+			}
 		</style>
 	</head>
 

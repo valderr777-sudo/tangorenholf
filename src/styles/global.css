@@ -14,6 +14,7 @@
 	--color-accent: #C8392B;
 	--color-neutral: #F2F2F2;
 	--color-overlay: rgba(0, 0, 0, 0.18);
+	/* --color-header-bg: rgba(255, 255, 255, 0.6); */
 	--font-sans: "Century Gothic", "AppleGothic", sans-serif;
 }
 
@@ -138,12 +139,12 @@ main {
 	transition: backdrop-filter 220ms ease, -webkit-backdrop-filter 220ms ease;
 }
 
-.site-header.is-scrolled,
+/* .site-header.is-scrolled,
 body.menu-open .site-header {
-	background: rgba(255, 255, 255, 0.6);
+	background: var(--color-header-bg);
 	backdrop-filter: blur(6px);
 	-webkit-backdrop-filter: blur(6px);
-}
+} */
 
 .home-page .site-header.is-scrolled {
 	background: transparent;
