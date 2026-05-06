@@ -89,9 +89,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 	<script>
 		import PhotoSwipeLightbox from "photoswipe/lightbox";
+		import PhotoSwipe from "photoswipe";
 		import "photoswipe/style.css";
 
-		let lightbox = null;
+		let lightbox: InstanceType<typeof PhotoSwipeLightbox> | null = null;
 
 		const initLightbox = () => {
 			if (lightbox) {
@@ -99,24 +100,33 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 				lightbox = null;
 			}
 
+			if (!document.querySelector(".pswp-gallery")) return;
+
 			lightbox = new PhotoSwipeLightbox({
 				gallery: ".pswp-gallery",
 				children: "a",
-				pswpModule: () => import("photoswipe"),
+				pswpModule: PhotoSwipe,
+			});
+
+			lightbox.on("beforeOpen", () => {
+				document.querySelectorAll(".pswp-gallery a").forEach((item) => {
+					const img = item.querySelector("img");
+					if (img && img.naturalWidth) {
+						(item as HTMLElement).dataset.pswpWidth = String(img.naturalWidth);
+						(item as HTMLElement).dataset.pswpHeight = String(img.naturalHeight);
+					}
+				});
 			});
 
 			lightbox.init();
 		};
 
-		const destroyLightbox = () => {
+		document.addEventListener("astro:page-load", initLightbox);
+		document.addEventListener("astro:before-preparation", () => {
 			if (lightbox) {
 				lightbox.destroy();
 				lightbox = null;
 			}
-		};
-
-		document.addEventListener("astro:page-load", initLightbox);
-		document.addEventListener("astro:before-preparation", destroyLightbox);
-		initLightbox();
+		});
 	</script>
 </BaseLayout>
