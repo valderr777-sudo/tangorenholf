@@ -51,18 +51,18 @@ const optimizedImages = await Promise.all(
 		position: fixed;
 		inset: 0;
 		z-index: 10001;
-		display: none;
+		display: flex;
 		align-items: center;
 		justify-content: center;
 		background: #ffffff;
 	}
 
-	.preloader.is-visible {
-		display: flex;
+	.preloader.is-hidden {
+		display: none;
 	}
 
 	.preloader.is-fading {
-		animation: preloader-fadeout 0.7s ease forwards;
+		animation: preloader-fadeout 2s ease forwards;
 		pointer-events: none;
 	}
 
@@ -81,34 +81,35 @@ const optimizedImages = await Promise.all(
 </style>
 
 <script>
-	function shouldShowPreloader(): boolean {
-		try {
-			const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
-			const isReload = navEntry?.type === 'reload';
-			const hasVisited = sessionStorage.getItem('visited_home');
-			if (isReload) return true;
-			if (!hasVisited) return true;
-			return false;
-		} catch {
-			return true;
-		}
-	}
+	let preloaderShownThisSession = false;
 
 	function initPreloader() {
 		const preloader = document.getElementById('preloader');
 		if (!preloader) return;
-		if (preloader.dataset.handled === 'true') return;
 
-		if (shouldShowPreloader()) {
-			preloader.dataset.handled = 'true';
+		if (preloaderShownThisSession) {
+			preloader.classList.add('is-hidden');
+			return;
+		}
+
+		try {
+			const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+			const isReload = navEntry?.type === 'reload';
+			const hasVisited = sessionStorage.getItem('visited_home');
+
+			if (!isReload && hasVisited) {
+				preloader.classList.add('is-hidden');
+				return;
+			}
+
+			preloaderShownThisSession = true;
 			try { sessionStorage.setItem('visited_home', '1'); } catch {}
-
-			preloader.classList.add('is-visible');
 
 			const startFadeout = () => {
 				preloader.classList.add('is-fading');
 				preloader.addEventListener('animationend', () => {
-					preloader.classList.remove('is-visible', 'is-fading');
+					preloader.classList.add('is-hidden');
+					preloader.classList.remove('is-fading');
 				}, { once: true });
 			};
 
@@ -117,15 +118,17 @@ const optimizedImages = await Promise.all(
 				const probe = new Image();
 				probe.src = preloadLink.href;
 				if (probe.complete) {
-					setTimeout(startFadeout, 400);
+					setTimeout(startFadeout, 1200);
 				} else {
-					probe.onload = () => setTimeout(startFadeout, 200);
-					probe.onerror = () => setTimeout(startFadeout, 200);
-					setTimeout(startFadeout, 3000);
+					probe.onload = () => setTimeout(startFadeout, 400);
+					probe.onerror = () => setTimeout(startFadeout, 400);
+					setTimeout(startFadeout, 3500);
 				}
 			} else {
-				setTimeout(startFadeout, 1200);
+				setTimeout(startFadeout, 1500);
 			}
+		} catch {
+			preloader.classList.add('is-hidden');
 		}
 	}
 
