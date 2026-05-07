@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
+import { Image, getImage } from "astro:assets";
 
 const wallEntries = await getCollection("wall");
 const sorted = wallEntries.sort((a, b) => {
@@ -8,20 +9,53 @@ const sorted = wallEntries.sort((a, b) => {
 	const numB = parseInt(b.id.replace(/\.md$/, ""), 10);
 	return numA - numB;
 });
+
+const rawImages = import.meta.glob<{ default: ImageMetadata }>('/src/assets/images/the-wall/*.{jpeg,jpg,png}', { eager: true });
+
+const processedEntries = await Promise.all(sorted.map(async (entry) => {
+	const assetPath = entry.data.image.replace('/images/', '/src/assets/images/');
+	const module = rawImages[assetPath];
+	
+	let lightboxSrc = entry.data.image;
+	let original = null;
+	
+	if (module) {
+		original = module.default;
+		const lightboxImage = await getImage({ src: original, width: 1600, format: 'webp' });
+		lightboxSrc = lightboxImage.src;
+	}
+	
+	return {
+		...entry,
+		original,
+		lightboxSrc
+	};
+}));
 ---
 
 <BaseLayout title="The Wall | Tangoren Holf">
 	<section class="collection-gallery wall-gallery" aria-label="The Wall gallery">
-		{sorted.map((entry, index) => (
+		{processedEntries.map((entry, index) => (
 			<button
 				type="button"
 				class="wall-thumb"
 				data-wall-index={index}
-				data-wall-image={entry.data.image}
+				data-wall-image={entry.lightboxSrc}
 				data-wall-title={entry.data.title}
 				data-wall-description={entry.data.description}
 			>
-				<img src={entry.data.image} alt={entry.data.title} loading="lazy" />
+				{entry.original ? (
+					<Image 
+						src={entry.original} 
+						alt={entry.data.title} 
+						widths={[400, 800, 1200]} 
+						sizes="(max-width: 768px) 100vw, 33vw" 
+						format="webp" 
+						loading="lazy" 
+					/>
+				) : (
+					<img src={entry.data.image} alt={entry.data.title} loading="lazy" />
+				)}
 				<div class="sr-only">{entry.data.description}</div>
 			</button>
 		))}
@@ -31,6 +65,7 @@ const sorted = wallEntries.sort((a, b) => {
 		.wall-thumb {
 			display: block;
 			width: 100%;
+			aspect-ratio: 3 / 4;
 			padding: 0;
 			border: 0;
 			background: none;
@@ -40,7 +75,7 @@ const sorted = wallEntries.sort((a, b) => {
 		.wall-thumb img {
 			display: block;
 			width: 100%;
-			aspect-ratio: 3 / 4;
+			height: 100%;
 			object-fit: cover;
 			background: var(--color-neutral, #f2f2f2);
 		}
@@ -65,7 +100,7 @@ const sorted = wallEntries.sort((a, b) => {
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			background: rgba(255, 255, 255, 0.97);
+			background: #ffffff;
 			opacity: 0;
 			pointer-events: none;
 			transition: opacity 300ms ease;
@@ -94,6 +129,10 @@ const sorted = wallEntries.sort((a, b) => {
 			color: rgba(26, 26, 26, 0.6);
 			transition: color 180ms ease;
 			padding: 0;
+		}
+
+		.wall-lightbox-close svg {
+			fill: currentColor;
 		}
 
 		.wall-lightbox-close:hover {
@@ -126,6 +165,37 @@ const sorted = wallEntries.sort((a, b) => {
 			max-height: 85vh;
 			object-fit: contain;
 			border-radius: 0;
+			opacity: 0;
+			transition: opacity 300ms ease;
+		}
+
+		.wall-lightbox-spinner {
+			position: absolute;
+			inset: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			pointer-events: none;
+			opacity: 0;
+			transition: opacity 200ms ease;
+		}
+
+		.wall-lightbox-spinner.visible {
+			opacity: 1;
+		}
+
+		.wall-lightbox-spinner::after {
+			content: "";
+			width: 28px;
+			height: 28px;
+			border: 2px solid rgba(26, 26, 26, 0.15);
+			border-top-color: rgba(26, 26, 26, 0.6);
+			border-radius: 50%;
+			animation: wall-spin 600ms linear infinite;
+		}
+
+		@keyframes wall-spin {
+			to { transform: rotate(360deg); }
 		}
 
 		.wall-lightbox-info {
@@ -138,7 +208,6 @@ const sorted = wallEntries.sort((a, b) => {
 			gap: 24px;
 			max-height: 85vh;
 			overflow-y: auto;
-			border: 1px solid rgba(26, 26, 26, 0.1);
 		}
 
 		.wall-lightbox-info .description {
@@ -267,13 +336,16 @@ const sorted = wallEntries.sort((a, b) => {
 
 		overlay.innerHTML = `
 				<button class="wall-lightbox-close" type="button" aria-label="Close lightbox">
-					<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-						<path d="M18 6L6 18M6 6l12 12"/>
+					<svg viewBox="0 0 200 200" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+						<g>
+							<path d="M166.333 38.892 160.442 33 99.667 93.775 38.892 33 33 38.892l60.775 60.775L33 160.442l5.892 5.891 60.775-60.775 60.775 60.775 5.891-5.891-60.775-60.775 60.775-60.775Z" fill-rule="evenodd"></path>
+						</g>
 					</svg>
 				</button>
 				<div class="wall-lightbox-inner">
 					<div class="wall-lightbox-image">
 						<img src="" alt="" />
+						<div class="wall-lightbox-spinner"></div>
 					</div>
 					<div class="wall-lightbox-info">
 						<p class="description"></p>
@@ -299,6 +371,19 @@ const sorted = wallEntries.sort((a, b) => {
 			return createLightbox();
 		};
 
+		const preloadAdjacent = () => {
+			const prev = state.currentIndex - 1;
+			const next = state.currentIndex + 1;
+			if (prev >= 0) {
+				const img = new Image();
+				img.src = state.items[prev].image;
+			}
+			if (next < state.items.length) {
+				const img = new Image();
+				img.src = state.items[next].image;
+			}
+		};
+
 		const updateLightboxContent = () => {
 			const overlay = state.overlay;
 			if (!overlay) return;
@@ -307,10 +392,20 @@ const sorted = wallEntries.sort((a, b) => {
 			if (!item) return;
 
 			const img = overlay.querySelector(".wall-lightbox-image img") as HTMLImageElement;
+			const spinner = overlay.querySelector(".wall-lightbox-spinner") as HTMLDivElement;
 			const desc = overlay.querySelector(".wall-lightbox-info .description") as HTMLElement;
 			const counter = overlay.querySelector(".nav-row .counter") as HTMLElement;
 			const prevBtn = overlay.querySelector(".nav-row .prev-btn") as HTMLButtonElement;
 			const nextBtn = overlay.querySelector(".nav-row .next-btn") as HTMLButtonElement;
+
+			// Скидаємо стан для анімації та показуємо спінер
+			img.style.opacity = "0";
+			spinner?.classList.add("visible");
+
+			img.onload = () => {
+				spinner?.classList.remove("visible");
+				img.style.opacity = "1";
+			};
 
 			img.src = item.image;
 			img.alt = item.title;
@@ -321,6 +416,8 @@ const sorted = wallEntries.sort((a, b) => {
 			const isLast = state.currentIndex === state.items.length - 1;
 			prevBtn.disabled = isFirst;
 			nextBtn.disabled = isLast;
+
+			preloadAdjacent();
 		};
 
 		const getScrollbarWidth = (): number => {
@@ -357,7 +454,10 @@ const sorted = wallEntries.sort((a, b) => {
 			state.overlay.addEventListener("transitionend", () => {
 				if (!state.overlay?.classList.contains("is-open")) {
 					const img = state.overlay.querySelector(".wall-lightbox-image img") as HTMLImageElement;
-					if (img) img.src = "";
+					if (img) {
+						img.style.opacity = "0";
+						img.src = "";
+					}
 					const desc = state.overlay.querySelector(".wall-lightbox-info .description") as HTMLElement;
 					if (desc) desc.textContent = "";
 				}

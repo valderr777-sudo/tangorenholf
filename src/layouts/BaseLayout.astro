@@ -36,6 +36,7 @@ const navItems = [
 		<meta name="generator" content={Astro.generator} />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<title transition:animate="none">{title}</title>
+		<slot name="head" />
 		<ClientRouter />
 		<style is:inline>
 			@font-face {

@@ -556,14 +556,6 @@ p {
 	background: var(--color-primary);
 }
 
-.collection-gallery img {
-	display: block;
-	width: 100%;
-	aspect-ratio: 3 / 4;
-	object-fit: cover;
-	background: var(--color-neutral);
-}
-
 .service-list {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));

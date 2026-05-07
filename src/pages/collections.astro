@@ -1,132 +1,602 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { Image, getImage } from "astro:assets";
+
+const rawImages = import.meta.glob<{ default: ImageMetadata }>('/src/assets/images/Collections/*.jpg', { eager: true });
+
+const images = await Promise.all(
+	Object.entries(rawImages).map(async ([path, module]) => {
+		const num = parseInt(path.split('/').pop()?.replace('.jpg', '') || '0', 10);
+		const original = module.default;
+		
+		const lightboxImage = await getImage({ src: original, width: 1600, format: 'webp' });
+		
+		return {
+			original,
+			lightboxSrc: lightboxImage.src,
+			alt: "Tangoren Holf collection installation",
+			num
+		};
+	})
+);
+images.sort((a, b) => a.num - b.num);
 ---
 
 <BaseLayout title="Collections | Tangoren Holf">
-	<section class="collection-gallery pswp-gallery" aria-label="Collections gallery">
-		<a href="/images/Collections/1.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/1.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/2.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/2.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/3.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/3.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/4.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/4.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/5.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/5.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/6.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/6.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/7.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/7.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/8.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/8.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/9.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/9.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/10.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/10.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/11.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/11.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/12.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/12.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/13.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/13.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/14.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/14.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/15.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/15.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/16.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/16.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/17.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/17.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/18.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/18.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/19.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/19.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/20.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/20.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/21.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/21.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/22.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/22.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/23.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/23.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/24.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/24.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/25.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/25.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/26.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/26.jpg" alt="Tangoren Holf collection installation" />
-		</a>
-		<a href="/images/Collections/27.jpg" data-pswp-width="1200" data-pswp-height="1600">
-			<img src="/images/Collections/27.jpg" alt="Tangoren Holf collection installation" />
-		</a>
+	<section class="collection-gallery" aria-label="Collections gallery" id="collection-gallery">
+		{images.map((img, index) => (
+			<button
+				type="button"
+				class="gallery-thumb"
+				data-gallery-src={img.lightboxSrc}
+				data-gallery-index={String(index)}
+				aria-label={`Open ${img.alt} ${index + 1}`}
+			>
+				<Image 
+					src={img.original} 
+					alt={img.alt} 
+					widths={[400, 800, 1200]} 
+					sizes="(max-width: 768px) 100vw, 33vw" 
+					format="webp" 
+					loading="lazy" 
+				/>
+			</button>
+		))}
 	</section>
 
-	<script>
-		import PhotoSwipeLightbox from "photoswipe/lightbox";
-		import PhotoSwipe from "photoswipe";
-		import "photoswipe/style.css";
+	<style is:global>
+		.collection-gallery {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 8px;
+			padding: 8px;
+			background: var(--color-primary);
+		}
 
-		let lightbox: InstanceType<typeof PhotoSwipeLightbox> | null = null;
+		.gallery-thumb {
+			display: block;
+			width: 100%;
+			aspect-ratio: 3 / 4;
+			padding: 0;
+			border: 0;
+			background: none;
+			cursor: pointer;
+		}
 
-		const initLightbox = () => {
-			if (lightbox) {
-				lightbox.destroy();
-				lightbox = null;
+		.gallery-thumb img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			background: var(--color-neutral);
+		}
+
+		/* Lightbox overlay */
+		.collection-lightbox {
+			position: fixed;
+			inset: 0;
+			z-index: 10000;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: #ffffff;
+			opacity: 0;
+			pointer-events: none;
+			visibility: hidden;
+			transition: opacity 350ms ease, visibility 0s linear 350ms;
+		}
+
+		.collection-lightbox.is-open {
+			opacity: 1;
+			pointer-events: auto;
+			visibility: visible;
+			transition: opacity 350ms ease, visibility 0s linear 0s;
+		}
+
+		/* Close button */
+		.collection-lightbox-close {
+			position: absolute;
+			top: 24px;
+			right: 24px;
+			z-index: 10;
+			width: 44px;
+			height: 44px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: none;
+			border: 0;
+			cursor: pointer;
+			color: rgba(26, 26, 26, 0.6);
+			transition: color 180ms ease;
+			padding: 0;
+			pointer-events: none;
+		}
+
+		.collection-lightbox-close:hover {
+			color: #1a1a1a;
+		}
+
+		.collection-lightbox-close svg {
+			fill: currentColor;
+		}
+
+		/* Navigation arrows */
+		.collection-lightbox-prev,
+		.collection-lightbox-next {
+			position: absolute;
+			top: 50%;
+			z-index: 10;
+			width: 56px;
+			height: 56px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: none;
+			border: 0;
+			cursor: pointer;
+			color: rgba(26, 26, 26, 0.5);
+			transition: color 180ms ease;
+			padding: 0;
+			transform: translateY(-50%);
+			pointer-events: none;
+		}
+
+		.collection-lightbox-prev {
+			left: 8px;
+		}
+
+		.collection-lightbox-next {
+			right: 8px;
+		}
+
+		.collection-lightbox-prev:hover,
+		.collection-lightbox-next:hover {
+			color: rgba(26, 26, 26, 0.9);
+		}
+
+		.collection-lightbox-prev:disabled,
+		.collection-lightbox-next:disabled {
+			opacity: 0.15;
+			cursor: default;
+		}
+
+		.collection-lightbox-prev svg,
+		.collection-lightbox-next svg {
+			stroke: currentColor;
+		}
+
+		/* Image area */
+		.collection-lightbox-image-area {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 72px clamp(56px, 8vw, 96px);
+		}
+
+		.collection-lightbox-image {
+			position: absolute;
+			inset: 72px clamp(56px, 8vw, 96px);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			transition: opacity 300ms ease;
+			pointer-events: none;
+		}
+
+		.collection-lightbox-image.active {
+			opacity: 1;
+			pointer-events: none;
+		}
+
+		.collection-lightbox.is-open .collection-lightbox-close,
+		.collection-lightbox.is-open .collection-lightbox-prev,
+		.collection-lightbox.is-open .collection-lightbox-next,
+		.collection-lightbox.is-open .collection-lightbox-image.active {
+			pointer-events: auto;
+		}
+
+		.collection-lightbox-image img {
+			display: block;
+			max-width: 100%;
+			max-height: 100%;
+			width: auto;
+			height: auto;
+			object-fit: contain;
+		}
+
+		/* Loading spinner */
+		.collection-lightbox-spinner {
+			position: absolute;
+			inset: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			pointer-events: none;
+			opacity: 0;
+			transition: opacity 200ms ease;
+		}
+
+		.collection-lightbox-spinner.visible {
+			opacity: 1;
+		}
+
+		.collection-lightbox-spinner::after {
+			content: "";
+			width: 28px;
+			height: 28px;
+			border: 2px solid rgba(26, 26, 26, 0.15);
+			border-top-color: rgba(26, 26, 26, 0.6);
+			border-radius: 50%;
+			animation: gallery-spin 600ms linear infinite;
+		}
+
+		@keyframes gallery-spin {
+			to { transform: rotate(360deg); }
+		}
+
+		/* Counter */
+		.collection-lightbox-counter {
+			position: absolute;
+			bottom: 24px;
+			left: 50%;
+			transform: translateX(-50%);
+			z-index: 10;
+			font-family: "Century Gothic", "AppleGothic", sans-serif;
+			font-size: 0.75rem;
+			font-weight: 400;
+			letter-spacing: 0.15em;
+			color: rgba(26, 26, 26, 0.45);
+		}
+
+		@media (max-width: 768px) {
+			.collection-lightbox-close {
+				top: 12px;
+				right: 12px;
 			}
 
-			if (!document.querySelector(".pswp-gallery")) return;
+			.collection-lightbox-prev,
+			.collection-lightbox-next {
+				width: 44px;
+				height: 44px;
+			}
 
-			lightbox = new PhotoSwipeLightbox({
-				gallery: ".pswp-gallery",
-				children: "a",
-				pswpModule: PhotoSwipe,
-			});
+			.collection-lightbox-prev {
+				left: 0;
+			}
 
-			lightbox.on("beforeOpen", () => {
-				document.querySelectorAll(".pswp-gallery a").forEach((item) => {
-					const img = item.querySelector("img");
-					if (img && img.naturalWidth) {
-						(item as HTMLElement).dataset.pswpWidth = String(img.naturalWidth);
-						(item as HTMLElement).dataset.pswpHeight = String(img.naturalHeight);
-					}
-				});
-			});
+			.collection-lightbox-next {
+				right: 0;
+			}
 
-			lightbox.init();
+			.collection-lightbox-image-area {
+				padding: 64px 44px;
+			}
+
+			.collection-lightbox-image {
+				inset: 64px 44px;
+			}
+		}
+	</style>
+
+	<script>
+		interface GalleryState {
+			overlay: HTMLDivElement | null;
+			isOpen: boolean;
+			items: string[];
+			currentIndex: number;
+			activeSlot: 0 | 1;
+			touchStartX: number;
+			touchStartY: number;
+			touchMoved: boolean;
+		}
+
+		const state: GalleryState = {
+			overlay: null,
+			isOpen: false,
+			items: [],
+			currentIndex: 0,
+			activeSlot: 0,
+			touchStartX: 0,
+			touchStartY: 0,
+			touchMoved: false,
 		};
 
-		document.addEventListener("astro:page-load", initLightbox);
-		document.addEventListener("astro:before-preparation", () => {
-			if (lightbox) {
-				lightbox.destroy();
-				lightbox = null;
+		const SWIPE_THRESHOLD = 60;
+
+		const getScrollbarWidth = (): number => {
+			return window.innerWidth - document.documentElement.clientWidth;
+		};
+
+		const lockScroll = () => {
+			const scrollbarWidth = getScrollbarWidth();
+			if (scrollbarWidth > 0) {
+				document.body.style.paddingRight = `${scrollbarWidth}px`;
 			}
-		});
+			document.body.style.overflow = "hidden";
+		};
+
+		const unlockScroll = () => {
+			document.body.style.overflow = "";
+			document.body.style.paddingRight = "";
+		};
+
+		const createOverlay = (): HTMLDivElement => {
+			const overlay = document.createElement("div");
+			overlay.className = "collection-lightbox";
+			overlay.setAttribute("role", "dialog");
+			overlay.setAttribute("aria-modal", "true");
+			overlay.setAttribute("aria-label", "Image lightbox");
+
+			overlay.innerHTML = `
+				<button class="collection-lightbox-close" type="button" aria-label="Close lightbox">
+					<svg viewBox="0 0 200 200" width="22" height="22" xmlns="http://www.w3.org/2000/svg">
+						<g>
+							<path d="M166.333 38.892 160.442 33 99.667 93.775 38.892 33 33 38.892l60.775 60.775L33 160.442l5.892 5.891 60.775-60.775 60.775 60.775 5.891-5.891-60.775-60.775 60.775-60.775Z" fill-rule="evenodd"></path>
+						</g>
+					</svg>
+				</button>
+				<button class="collection-lightbox-prev" type="button" aria-label="Previous image">
+					<svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke-width="1">
+						<path d="M16 20l-8-8 8-8"/>
+					</svg>
+				</button>
+				<div class="collection-lightbox-image-area">
+					<div class="collection-lightbox-image active">
+						<img src="" alt="" />
+					</div>
+					<div class="collection-lightbox-image">
+						<img src="" alt="" />
+					</div>
+					<div class="collection-lightbox-spinner"></div>
+				</div>
+				<button class="collection-lightbox-next" type="button" aria-label="Next image">
+					<svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke-width="1">
+						<path d="M8 4l8 8-8 8"/>
+					</svg>
+				</button>
+				<div class="collection-lightbox-counter"></div>
+			`;
+
+			document.body.appendChild(overlay);
+			state.overlay = overlay;
+			return overlay;
+		};
+
+		const getOrCreateOverlay = (): HTMLDivElement => {
+			if (state.overlay && document.body.contains(state.overlay)) {
+				return state.overlay;
+			}
+			return createOverlay();
+		};
+
+		const setImage = (slot: 0 | 1, src: string) => {
+			if (!state.overlay) return;
+			const containers = state.overlay.querySelectorAll(".collection-lightbox-image");
+			const img = containers[slot]?.querySelector("img") as HTMLImageElement;
+			if (!img) return;
+			if (img.getAttribute("data-loaded-src") === src) return;
+
+			const spinner = state.overlay.querySelector(".collection-lightbox-spinner");
+			spinner?.classList.add("visible");
+
+			img.setAttribute("data-loaded-src", src);
+			img.src = src;
+			img.alt = "";
+
+			const onLoad = () => {
+				spinner?.classList.remove("visible");
+				img.removeEventListener("load", onLoad);
+				img.removeEventListener("error", onLoad);
+			};
+			img.addEventListener("load", onLoad);
+			img.addEventListener("error", onLoad);
+		};
+
+		const showSlot = (slot: 0 | 1) => {
+			if (!state.overlay) return;
+			const containers = state.overlay.querySelectorAll(".collection-lightbox-image");
+			containers.forEach((c, i) => {
+				c.classList.toggle("active", i === slot);
+			});
+			state.activeSlot = slot;
+		};
+
+		const updateCounter = () => {
+			if (!state.overlay) return;
+			const counter = state.overlay.querySelector(".collection-lightbox-counter");
+			if (counter) {
+				counter.textContent = `${state.currentIndex + 1} / ${state.items.length}`;
+			}
+		};
+
+		const updateNavButtons = () => {
+			if (!state.overlay) return;
+			const prevBtn = state.overlay.querySelector(".collection-lightbox-prev") as HTMLButtonElement;
+			const nextBtn = state.overlay.querySelector(".collection-lightbox-next") as HTMLButtonElement;
+			if (prevBtn) prevBtn.disabled = state.currentIndex === 0;
+			if (nextBtn) nextBtn.disabled = state.currentIndex === state.items.length - 1;
+		};
+
+		const preloadAdjacent = () => {
+			const prev = state.currentIndex - 1;
+			const next = state.currentIndex + 1;
+			if (prev >= 0) {
+				const img = new Image();
+				img.src = state.items[prev];
+			}
+			if (next < state.items.length) {
+				const img = new Image();
+				img.src = state.items[next];
+			}
+		};
+
+		const openLightbox = (index: number) => {
+			if (state.items.length === 0) return;
+			state.currentIndex = index;
+			state.activeSlot = 0;
+
+			const overlay = getOrCreateOverlay();
+			lockScroll();
+
+			setImage(0, state.items[index]);
+			setImage(1, "");
+			showSlot(0);
+			updateCounter();
+			updateNavButtons();
+			preloadAdjacent();
+
+			void overlay.offsetWidth;
+			overlay.classList.add("is-open");
+			state.isOpen = true;
+		};
+
+		const closeLightbox = () => {
+			if (!state.overlay || !state.isOpen) return;
+			state.overlay.classList.remove("is-open");
+			state.isOpen = false;
+			unlockScroll();
+
+			state.overlay.addEventListener("transitionend", () => {
+				if (!state.overlay || state.overlay.classList.contains("is-open")) return;
+				const containers = state.overlay.querySelectorAll(".collection-lightbox-image");
+				containers.forEach((c) => {
+					const img = c.querySelector("img") as HTMLImageElement;
+					if (img) {
+						img.removeAttribute("data-loaded-src");
+						img.src = "";
+					}
+				});
+			}, { once: true });
+		};
+
+		const goTo = (index: number) => {
+			if (index < 0 || index >= state.items.length) return;
+			if (index === state.currentIndex) return;
+
+			const nextSlot = state.activeSlot === 0 ? 1 : 0;
+			setImage(nextSlot, state.items[index]);
+			showSlot(nextSlot);
+			state.currentIndex = index;
+			updateCounter();
+			updateNavButtons();
+			preloadAdjacent();
+		};
+
+		const goPrev = () => goTo(state.currentIndex - 1);
+		const goNext = () => goTo(state.currentIndex + 1);
+
+		/* Keyboard */
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if (!state.isOpen) return;
+			switch (e.key) {
+				case "Escape":
+					closeLightbox();
+					break;
+				case "ArrowLeft":
+					goPrev();
+					break;
+				case "ArrowRight":
+					goNext();
+					break;
+			}
+		};
+
+		/* Click delegation */
+		const handleClick = (e: MouseEvent) => {
+			if (!state.isOpen || !state.overlay) return;
+			const target = e.target as HTMLElement;
+
+			if (target.closest(".collection-lightbox-close")) {
+				closeLightbox();
+				return;
+			}
+			if (target === state.overlay) {
+				closeLightbox();
+				return;
+			}
+			if (target.closest(".collection-lightbox-prev")) {
+				goPrev();
+				return;
+			}
+			if (target.closest(".collection-lightbox-next")) {
+				goNext();
+				return;
+			}
+		};
+
+		/* Swipe on image area */
+		const handleImageTouchStart = (e: TouchEvent) => {
+			if (!state.isOpen) return;
+			if (e.touches.length !== 1) return;
+			state.touchStartX = e.touches[0].clientX;
+			state.touchStartY = e.touches[0].clientY;
+			state.touchMoved = false;
+		};
+
+		const handleImageTouchMove = (e: TouchEvent) => {
+			if (!state.isOpen) return;
+			if (e.touches.length !== 1) return;
+			state.touchMoved = true;
+		};
+
+		const handleImageTouchEnd = (e: TouchEvent) => {
+			if (!state.isOpen || !state.touchMoved) return;
+			const dx = e.changedTouches[0].clientX - state.touchStartX;
+			const dy = e.changedTouches[0].clientY - state.touchStartY;
+
+			if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.5) {
+				if (dx < 0) goNext();
+				else goPrev();
+			}
+		};
+
+		const initGallery = () => {
+			const thumbs = document.querySelectorAll<HTMLButtonElement>(".gallery-thumb");
+			state.items = [];
+			thumbs.forEach((btn) => {
+				const src = btn.dataset.gallerySrc;
+				if (src) state.items.push(src);
+			});
+
+			const gallery = document.getElementById("collection-gallery");
+			if (gallery && !gallery.dataset.galleryReady) {
+				gallery.dataset.galleryReady = "true";
+				gallery.addEventListener("click", (e) => {
+					const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".gallery-thumb");
+					if (!btn) return;
+					const index = parseInt(btn.dataset.galleryIndex || "0", 10);
+					openLightbox(index);
+				});
+			}
+
+			if (!document.body.dataset.collectionLightboxReady) {
+				document.body.dataset.collectionLightboxReady = "true";
+				document.addEventListener("keydown", handleKeyDown);
+				document.addEventListener("click", handleClick);
+				document.addEventListener("touchstart", handleImageTouchStart, { passive: true });
+				document.addEventListener("touchmove", handleImageTouchMove, { passive: true });
+				document.addEventListener("touchend", handleImageTouchEnd, { passive: true });
+			}
+		};
+
+		const cleanupGallery = () => {
+			if (state.overlay && document.body.contains(state.overlay)) {
+				document.body.removeChild(state.overlay);
+			}
+			state.overlay = null;
+			state.isOpen = false;
+			state.items = [];
+			state.currentIndex = 0;
+			unlockScroll();
+		};
+
+		initGallery();
+		document.addEventListener("astro:page-load", initGallery);
+		document.addEventListener("astro:before-preparation", cleanupGallery);
 	</script>
 </BaseLayout>

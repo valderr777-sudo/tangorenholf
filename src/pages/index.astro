@@ -7,6 +7,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 	description="Tangoren Holf is an art consulting firm for private, corporate, and hospitality collections."
 	bodyClass="home-page"
 >
+	<Fragment slot="head">
+		<link rel="preload" href="https://static.wixstatic.com/media/934aa2_a3c2adbdc4e042d8a20dc02149b85701~mv2.jpg" as="image" fetchpriority="high" />
+	</Fragment>
 	<section class="hero hero--home">
 		<div class="hero-slideshow" aria-hidden="true">
 			<div class="hero-slide hero-slide--one"></div>
