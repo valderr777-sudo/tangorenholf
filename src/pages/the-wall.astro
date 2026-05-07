@@ -12,6 +12,8 @@ const sorted = wallEntries.sort((a, b) => {
 
 const rawImages = import.meta.glob<{ default: ImageMetadata }>('/src/assets/images/the-wall/*.{jpeg,jpg,png}', { eager: true });
 
+const slugMap = new Map<string, number>();
+
 const processedEntries = await Promise.all(sorted.map(async (entry) => {
 	const assetPath = entry.data.image.replace('/images/', '/src/assets/images/');
 	const module = rawImages[assetPath];
@@ -25,12 +27,18 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 		lightboxSrc = lightboxImage.src;
 	}
 
-	// Generate URL-friendly slug from title
-	const slug = entry.data.title
+	// Generate URL-friendly slug from title (with dedup for duplicate titles)
+	let slug = entry.data.title
 		.toLowerCase()
 		.replace(/[^a-z0-9]+/g, "-")
 		.replace(/^-|-$/g, "");
-	
+	const count = slugMap.get(slug) || 0;
+	slugMap.set(slug, count + 1);
+	if (count > 0) {
+		const num = entry.id.replace(/\.md$/, "");
+		slug = `${slug}-${num}`;
+	}
+
 	return {
 		...entry,
 		original,
@@ -41,51 +49,90 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 ---
 
 <BaseLayout title="The Wall | Tangoren Holf" description="Explore The Wall — Tangoren Holf's curated gallery of available artwork. Discover original pieces from established and emerging artists for your collection.">
+	<Fragment slot="head">
+		<script type="application/ld+json" is:inline>
+			{JSON.stringify({
+				"@context": "https://schema.org",
+				"@type": "CollectionPage",
+				"@id": Astro.url.href + "#collectionpage",
+				"url": Astro.url.href,
+				"name": "The Wall | Tangoren Holf",
+				"description": "Explore The Wall — Tangoren Holf's curated gallery of available artwork. Discover original pieces from established and emerging artists for your collection.",
+				"hasPart": processedEntries.map((entry, i) => ({
+					"@type": "VisualArtwork",
+					"@id": Astro.url.href + "/" + entry.slug + "#artwork",
+					"name": entry.data.title,
+					"artist": { "@type": "Person", "name": entry.data.artist },
+					"url": new URL("/the-wall/" + entry.slug, Astro.url).href,
+					"image": new URL(entry.lightboxSrc, Astro.url).href,
+					"dateCreated": entry.data.dateOfCreation,
+					"position": i + 1,
+				})),
+			})}
+		</script>
+		<script type="application/ld+json" is:inline>
+			{JSON.stringify({
+				"@context": "https://schema.org",
+				"@type": "BreadcrumbList",
+				"itemListElement": [
+					{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tangorenholf.com/" },
+					{ "@type": "ListItem", "position": 2, "name": "The Wall", "item": Astro.url.href },
+				],
+			})}
+		</script>
+	</Fragment>
 	<section class="collection-gallery wall-gallery" aria-label="The Wall gallery">
 		{processedEntries.map((entry, index) => (
-			<button
-				type="button"
-				class="wall-thumb"
-				data-wall-index={index}
-				data-wall-slug={entry.slug}
-				data-wall-image={entry.lightboxSrc}
-				data-wall-title={entry.data.title}
-				data-wall-description={entry.data.description}
-				data-wall-artist={entry.data.artist}
-				data-wall-date={entry.data.dateOfCreation}
-				data-wall-medium={entry.data.medium}
-				data-wall-size={entry.data.size}
-			>
-				{entry.original ? (
-					<Image 
-						src={entry.original} 
-						alt={entry.data.title} 
-						widths={[400, 800, 1200]} 
-						sizes="(max-width: 768px) 100vw, 33vw" 
-						format="webp" 
-						loading="lazy" 
-					/>
-				) : (
-					<img src={entry.data.image} alt={entry.data.title} loading="lazy" />
-				)}
+			<div class="wall-thumb-wrapper">
+				<div
+					class="wall-thumb-link"
+					role="button"
+					tabindex="0"
+					data-wall-index={index}
+					data-wall-slug={entry.slug}
+					data-wall-image={entry.lightboxSrc}
+					data-wall-title={entry.data.title}
+					data-wall-description={entry.data.description}
+					data-wall-artist={entry.data.artist}
+					data-wall-date={entry.data.dateOfCreation}
+					data-wall-medium={entry.data.medium}
+					data-wall-size={entry.data.size}
+					aria-label={`${entry.data.title} by ${entry.data.artist}`}
+				>
+					{entry.original ? (
+						<Image 
+							src={entry.original} 
+							alt={`${entry.data.title} by ${entry.data.artist}`}
+							widths={[400, 800, 1200]} 
+							sizes="(max-width: 768px) 100vw, 33vw" 
+							format="webp" 
+							loading="lazy" 
+						/>
+					) : (
+						<img src={entry.data.image} alt={`${entry.data.title} by ${entry.data.artist}`} loading="lazy" />
+					)}
+				</div>
 				<div class="sr-only">{entry.data.description}</div>
-			</button>
+			</div>
 		))}
 	</section>
 
 	<style is:global>
-		.wall-thumb {
-			display: block;
-			width: 100%;
-			aspect-ratio: 3 / 4;
-			padding: 0;
-			border: 0;
-			background: none;
-			cursor: pointer;
+		.wall-thumb-wrapper {
+			position: relative;
 			overflow: hidden;
+			aspect-ratio: 3 / 4;
 		}
 
-		.wall-thumb img {
+		.wall-thumb-link {
+			display: block;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			cursor: pointer;
+		}
+
+		.wall-thumb-link img {
 			display: block;
 			width: 100%;
 			height: 100%;
@@ -94,9 +141,10 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 			transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 		}
 
-		.wall-thumb:hover img {
+		.wall-thumb-wrapper:hover .wall-thumb-link img {
 			transform: scale(1.04);
 		}
+
 
 		.sr-only {
 			position: absolute;
@@ -404,20 +452,20 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 		};
 
 		/**
-		 * Update the browser URL hash to reflect the current artwork slug.
+		 * Update the browser URL path to reflect the current artwork slug.
 		 */
-		const updateHash = () => {
+		const updatePath = () => {
 			const item = state.items[state.currentIndex];
 			if (!item) return;
 			const slug = item.slug || `item-${state.currentIndex}`;
-			history.replaceState(null, "", `#${slug}`);
+			history.replaceState({ wallIndex: state.currentIndex }, "", `/the-wall/${slug}`);
 		};
 
 		/**
-		 * Remove the hash from the URL.
+		 * Restore the gallery path when closing the lightbox.
 		 */
-		const clearHash = () => {
-			history.replaceState(null, "", window.location.pathname + window.location.search);
+		const clearPath = () => {
+			history.replaceState(null, "", "/the-wall");
 		};
 
 		/**
@@ -507,6 +555,7 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 			const dateEl = overlay.querySelector(".wall-lightbox-info .detail-date") as HTMLElement;
 			const mediumEl = overlay.querySelector(".wall-lightbox-info .detail-medium") as HTMLElement;
 			const sizeEl = overlay.querySelector(".wall-lightbox-info .detail-size") as HTMLElement;
+			const inquireBtn = overlay.querySelector(".wall-lightbox-info .inquire-btn") as HTMLAnchorElement;
 			const counter = overlay.querySelector(".nav-row .counter") as HTMLElement;
 			const prevBtn = overlay.querySelector(".nav-row .prev-btn") as HTMLButtonElement;
 			const nextBtn = overlay.querySelector(".nav-row .next-btn") as HTMLButtonElement;
@@ -525,6 +574,10 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 			artistEl.textContent = item.artist;
 			titleEl.textContent = item.title;
 
+			// Update inquire button with dynamic subject line
+			const subject = `Inquiry: Artist: ${item.artist} Title: ${item.title}`;
+			inquireBtn.href = `mailto:art@tangorenholf.com?subject=${encodeURIComponent(subject)}`;
+
 			const hasDetails = item.dateOfCreation || item.medium || item.size;
 			const detailsContainer = overlay.querySelector(".wall-lightbox-info .artwork-details") as HTMLElement;
 			if (detailsContainer) {
@@ -542,7 +595,7 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 			nextBtn.disabled = isLast;
 
 			preloadAdjacent();
-			updateHash();
+			updatePath();
 		};
 
 		const getScrollbarWidth = (): number => {
@@ -574,7 +627,7 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 			state.isOpen = false;
 			document.body.style.overflow = "";
 			document.body.style.paddingRight = "";
-			clearHash();
+			clearPath();
 
 			// Clear content after fade-out transition completes
 			state.overlay.addEventListener("transitionend", () => {
@@ -618,9 +671,27 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 		};
 
 		/**
-		 * Handle hash changes — open lightbox for the matching artwork slug.
+		 * Handle popstate (back/forward) — sync lightbox with the current path.
 		 */
-		const handleHashChange = () => {
+		const handlePopState = (e: PopStateEvent) => {
+			const path = window.location.pathname;
+			if (path.startsWith("/the-wall/") && path !== "/the-wall") {
+				const slug = path.replace("/the-wall/", "");
+				const index = findIndexBySlug(slug);
+				if (index >= 0) {
+					openLightbox(index);
+				}
+			} else {
+				if (state.isOpen) {
+					closeLightbox();
+				}
+			}
+		};
+
+		/**
+		 * Check the URL hash on initial load — used when redirected from [slug].astro.
+		 */
+		const checkHashOnLoad = () => {
 			const hash = window.location.hash.replace("#", "");
 			if (!hash) return;
 			const index = findIndexBySlug(hash);
@@ -631,9 +702,9 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 
 		const initWall = () => {
 			// Collect all items from the DOM
-			const thumbs = document.querySelectorAll<HTMLButtonElement>(".wall-thumb");
+			const triggers = document.querySelectorAll<HTMLElement>(".wall-thumb-link");
 			state.items = [];
-			thumbs.forEach((btn) => {
+			triggers.forEach((btn) => {
 				state.items.push({
 					image: btn.dataset.wallImage || "",
 					title: btn.dataset.wallTitle || "Untitled",
@@ -651,9 +722,18 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 			if (gallery && !gallery.dataset.wallReady) {
 				gallery.dataset.wallReady = "true";
 				gallery.addEventListener("click", (e) => {
-					const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".wall-thumb");
-					if (!btn) return;
-					const index = parseInt(btn.dataset.wallIndex || "0", 10);
+					const link = (e.target as HTMLElement).closest<HTMLElement>(".wall-thumb-link");
+					if (!link) return;
+					const index = parseInt(link.dataset.wallIndex || "0", 10);
+					openLightbox(index);
+				});
+
+				gallery.addEventListener("keydown", (e) => {
+					if (e.key !== "Enter" && e.key !== " ") return;
+					const link = (e.target as HTMLElement).closest<HTMLElement>(".wall-thumb-link");
+					if (!link) return;
+					e.preventDefault();
+					const index = parseInt(link.dataset.wallIndex || "0", 10);
 					openLightbox(index);
 				});
 			}
@@ -693,11 +773,12 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 				});
 
 				// Listen for hash changes
-				window.addEventListener("hashchange", handleHashChange);
+				window.addEventListener("popstate", handlePopState);
 			}
 
-			// Check if there's a hash on initial load to open a specific artwork
-			handleHashChange();
+			// Check if the initial path or hash points to a specific artwork
+			handlePopState(new PopStateEvent("popstate"));
+			checkHashOnLoad();
 		};
 
 		const cleanupWall = () => {

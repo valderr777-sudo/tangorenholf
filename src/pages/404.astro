@@ -1,0 +1,85 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="404 — Page Not Found | Tangoren Holf" description="The page you are looking for does not exist." hideHeaderFooter bodyClass="not-found-page">
+	<section class="not-found">
+		<div class="not-found-inner">
+			<img src="/images/TH-LOGO.svg" alt="Tangoren Holf" class="not-found-logo" />
+			<h1>404</h1>
+			<p>The page you are looking for does not exist.</p>
+			<a href="/" class="not-found-link">Back to Home</a>
+		</div>
+	</section>
+</BaseLayout>
+
+<style is:global>
+	.not-found-page main {
+		padding-top: 0;
+	}
+	.not-found {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100vh;
+		overflow: hidden;
+		padding: 24px;
+		background: #ffffff;
+	}
+
+	.not-found-inner {
+		text-align: center;
+		max-width: 400px;
+	}
+
+	.not-found-logo {
+		display: block;
+		width: clamp(88px, 11.2vw, 168px);
+		margin: 0 auto 40px auto;
+	}
+
+	.not-found h1 {
+		font-family: "Century Gothic", "AppleGothic", sans-serif;
+		font-size: 5rem;
+		font-weight: 400;
+		letter-spacing: 0.05em;
+		color: #1a1a1a;
+		margin: 0 0 16px 0;
+		line-height: 1;
+	}
+
+	.not-found p {
+		font-family: "Century Gothic", "AppleGothic", sans-serif;
+		font-size: 0.85rem;
+		font-weight: 400;
+		letter-spacing: 0.1em;
+		color: rgba(26, 26, 26, 0.6);
+		margin: 0 0 32px 0;
+	}
+
+	.not-found-link {
+		display: inline-block;
+		padding: 10px 28px;
+		background: #c8392b;
+		color: #ffffff;
+		font-family: "Century Gothic", "AppleGothic", sans-serif;
+		font-size: 0.75rem;
+		font-weight: 400;
+		letter-spacing: 0.25em;
+		text-transform: uppercase;
+		text-decoration: none;
+		transition: background 180ms ease;
+	}
+
+	.not-found-link:hover {
+		background: #a82f24;
+	}
+
+	@media (max-height: 400px) {
+		.not-found {
+			height: auto;
+			min-height: 100vh;
+			overflow: auto;
+		}
+	}
+</style>

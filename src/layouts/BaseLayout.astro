@@ -7,6 +7,9 @@ interface Props {
 	description?: string;
 	bodyClass?: string;
 	canonical?: string;
+	ogImage?: string;
+	ogImageAlt?: string;
+	hideHeaderFooter?: boolean;
 }
 
 const {
@@ -14,6 +17,9 @@ const {
 	description = "An award-winning residential design studio known for full-service interior design, with a portfolio spanning national and international projects.",
 	bodyClass = "",
 	canonical,
+	ogImage = "/images/social-share.jpg",
+	ogImageAlt = "Tangoren Holf Art Consulting",
+	hideHeaderFooter = false,
 } = Astro.props;
 
 const htmlClass = bodyClass.split(" ").includes("home-page") ? "home-document" : "";
@@ -29,6 +35,50 @@ const navItems = [
 	{ href: "/the-wall", label: "THE WALL" },
 	{ href: "/contact", label: "CONTACT" },
 ];
+
+const organizationSchema = {
+	"@context": "https://schema.org",
+	"@type": "Organization",
+	"@id": "https://tangorenholf.com/#organization",
+	"name": "Tangoren Holf",
+	"url": "https://tangorenholf.com",
+	"logo": "https://tangorenholf.com/images/TH-LOGO.svg",
+	"description": description,
+	"email": "art@tangorenholf.com",
+	"sameAs": [
+		"https://www.facebook.com/tangorenholf"
+	]
+};
+
+const websiteSchema = {
+	"@context": "https://schema.org",
+	"@type": "WebSite",
+	"@id": "https://tangorenholf.com/#website",
+	"url": "https://tangorenholf.com",
+	"name": "Tangoren Holf",
+	"inLanguage": "en",
+	"potentialAction": {
+		"@type": "SearchAction",
+		"target": {
+			"@type": "EntryPoint",
+			"urlTemplate": "https://tangorenholf.com/search?q={search_term_string}"
+		},
+		"query-input": "required name=search_term_string"
+	}
+};
+
+const breadcrumbSchema = {
+	"@context": "https://schema.org",
+	"@type": "BreadcrumbList",
+	"itemListElement": [
+		{
+			"@type": "ListItem",
+			"position": 1,
+			"name": "Home",
+			"item": "https://tangorenholf.com/"
+		}
+	]
+};
 ---
 
 <!doctype html>
@@ -39,6 +89,7 @@ const navItems = [
 		<meta name="description" content={description} />
 		<meta name="generator" content={Astro.generator} />
 		<meta name="robots" content="index, follow" />
+		<meta name="author" content="Tangoren Holf" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="canonical" href={canonicalUrl} />
 
@@ -50,13 +101,23 @@ const navItems = [
 		<meta property="og:type" content="website" />
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
-		<meta property="og:image" content="/images/TH-LOGO.svg" />
+		<meta property="og:image" content={new URL(ogImage, Astro.url).href} />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content={ogImageAlt} />
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
-		<meta name="twitter:image" content="/images/TH-LOGO.svg" />
+		<meta name="twitter:image" content={new URL(ogImage, Astro.url).href} />
+		<meta name="twitter:image:alt" content={ogImageAlt} />
+
+		<!-- Structured Data -->
+		<script type="application/ld+json" is:inline>
+			{JSON.stringify(organizationSchema)}
+		</script>
+		<script type="application/ld+json" is:inline>
+			{JSON.stringify(websiteSchema)}
+		</script>
 
 		<title transition:animate="none">{title}</title>
 		<slot name="head" />
@@ -101,35 +162,41 @@ const navItems = [
 	<body class={bodyClass}>
 		<slot name="preloader" />
 
-		<header class="site-header site-header--topbar" data-site-header>
-			<a class="site-logo" href="/" aria-label="Tangoren Holf home">
-				<img src={headerLogoSrc} alt="Tangoren Holf" />
-			</a>
+		{!hideHeaderFooter && (
+			<>
+				<header class="site-header site-header--topbar" data-site-header>
+					<a class="site-logo" href="/" aria-label="Tangoren Holf home">
+						<img src={headerLogoSrc} alt="Tangoren Holf" />
+					</a>
 
-			<nav class="desktop-nav" aria-label="Primary navigation">
-				{navItems.map((item) => <a href={item.href}>{item.label}</a>)}
-			</nav>
+					<nav class="desktop-nav" aria-label="Primary navigation">
+						{navItems.map((item) => <a href={item.href}>{item.label}</a>)}
+					</nav>
 
-			<button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" data-menu-toggle>
-				<span></span>
-				<span></span>
-			</button>
-		</header>
+					<button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" data-menu-toggle>
+						<span></span>
+						<span></span>
+					</button>
+				</header>
 
-		<div class="mobile-menu" data-mobile-menu>
-			<nav aria-label="Mobile navigation">
-				{navItems.map((item) => <a href={item.href}>{item.label}</a>)}
-			</nav>
-		</div>
+				<div class="mobile-menu" data-mobile-menu>
+					<nav aria-label="Mobile navigation">
+						{navItems.map((item) => <a href={item.href}>{item.label}</a>)}
+					</nav>
+				</div>
+			</>
+		)}
 
 		<div transition:animate={fade({ duration: 400 })}>
 			<main>
 				<slot />
 			</main>
 
-			<footer class="site-footer">
-				<p>&copy;2024 TANGOREN HOLF. All rights reserved.</p>
-			</footer>
+			{!hideHeaderFooter && (
+				<footer class="site-footer">
+					<p>&copy;2024 TANGOREN HOLF. All rights reserved.</p>
+				</footer>
+			)}
 		</div>
 
 		<script>

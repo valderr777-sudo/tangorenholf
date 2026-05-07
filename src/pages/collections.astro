@@ -23,6 +23,35 @@ images.sort((a, b) => a.num - b.num);
 ---
 
 <BaseLayout title="Collections | Tangoren Holf" description="Browse the Tangoren Holf collection — a curated gallery of art installations showcasing our portfolio of residential and commercial interior design projects.">
+	<Fragment slot="head">
+		<script type="application/ld+json" is:inline>
+			{JSON.stringify({
+				"@context": "https://schema.org",
+				"@type": "CollectionPage",
+				"@id": Astro.url.href + "#collectionpage",
+				"url": Astro.url.href,
+				"name": "Collections | Tangoren Holf",
+				"description": "Browse the Tangoren Holf collection — a curated gallery of art installations showcasing our portfolio of residential and commercial interior design projects.",
+				"hasPart": images.map((img, i) => ({
+					"@type": "ImageObject",
+					"@id": Astro.url.href + "#image-" + (i + 1),
+					"url": new URL(img.lightboxSrc, Astro.url).href,
+					"name": "Tangoren Holf collection installation " + (i + 1),
+					"position": i + 1,
+				})),
+			})}
+		</script>
+		<script type="application/ld+json" is:inline>
+			{JSON.stringify({
+				"@context": "https://schema.org",
+				"@type": "BreadcrumbList",
+				"itemListElement": [
+					{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tangorenholf.com/" },
+					{ "@type": "ListItem", "position": 2, "name": "Collections", "item": Astro.url.href },
+				],
+			})}
+		</script>
+	</Fragment>
 	<section class="collection-gallery" aria-label="Collections gallery" id="collection-gallery">
 		{images.map((img, index) => (
 			<button
