@@ -24,25 +24,37 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 		const lightboxImage = await getImage({ src: original, width: 1600, format: 'webp' });
 		lightboxSrc = lightboxImage.src;
 	}
+
+	// Generate URL-friendly slug from title
+	const slug = entry.data.title
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-|-$/g, "");
 	
 	return {
 		...entry,
 		original,
-		lightboxSrc
+		lightboxSrc,
+		slug,
 	};
 }));
 ---
 
-<BaseLayout title="The Wall | Tangoren Holf">
+<BaseLayout title="The Wall | Tangoren Holf" description="Explore The Wall — Tangoren Holf's curated gallery of available artwork. Discover original pieces from established and emerging artists for your collection.">
 	<section class="collection-gallery wall-gallery" aria-label="The Wall gallery">
 		{processedEntries.map((entry, index) => (
 			<button
 				type="button"
 				class="wall-thumb"
 				data-wall-index={index}
+				data-wall-slug={entry.slug}
 				data-wall-image={entry.lightboxSrc}
 				data-wall-title={entry.data.title}
 				data-wall-description={entry.data.description}
+				data-wall-artist={entry.data.artist}
+				data-wall-date={entry.data.dateOfCreation}
+				data-wall-medium={entry.data.medium}
+				data-wall-size={entry.data.size}
 			>
 				{entry.original ? (
 					<Image 
@@ -211,18 +223,54 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 			padding: 40px 32px;
 			display: flex;
 			flex-direction: column;
-			gap: 24px;
+			gap: 16px;
 			max-height: 85vh;
 			overflow-y: auto;
 		}
 
-		.wall-lightbox-info .description {
-			font-family: "Century Gothic", "AppleGothic", sans-serif;
-			font-size: 0.95rem;
+		.wall-lightbox-info .artwork-artist {
+			font-size: 0.85rem;
+			font-weight: 700;
+			letter-spacing: 0.15em;
+			text-transform: uppercase;
+			color: #c8392b;
+			margin: 0;
+		}
+
+		.wall-lightbox-info .artwork-title {
+			font-size: 1.2rem;
 			font-weight: 400;
-			line-height: 1.7;
+			letter-spacing: 0.05em;
+			line-height: 1.3;
 			color: #1a1a1a;
-			white-space: pre-line;
+			margin: 0;
+		}
+
+		.wall-lightbox-info .artwork-details {
+			display: grid;
+			gap: 6px;
+			margin: 0;
+			padding: 0;
+		}
+
+		.wall-lightbox-info .artwork-details dt {
+			font-size: 0.65rem;
+			font-weight: 700;
+			letter-spacing: 0.2em;
+			text-transform: uppercase;
+			color: rgba(26, 26, 26, 0.5);
+			margin-top: 10px;
+		}
+
+		.wall-lightbox-info .artwork-details dt:first-child {
+			margin-top: 0;
+		}
+
+		.wall-lightbox-info .artwork-details dd {
+			font-size: 0.85rem;
+			font-weight: 400;
+			line-height: 1.5;
+			color: #1a1a1a;
 			margin: 0;
 		}
 
@@ -241,6 +289,7 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 			border: 0;
 			cursor: pointer;
 			transition: background 180ms ease;
+			margin-top: 4px;
 		}
 
 		.wall-lightbox-info .inquire-btn:hover {
@@ -333,6 +382,11 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 			image: string;
 			title: string;
 			description: string;
+			artist: string;
+			dateOfCreation: string;
+			medium: string;
+			size: string;
+			slug: string;
 		}
 
 		interface LightboxState {
@@ -347,6 +401,30 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 			isOpen: false,
 			items: [],
 			currentIndex: 0,
+		};
+
+		/**
+		 * Update the browser URL hash to reflect the current artwork slug.
+		 */
+		const updateHash = () => {
+			const item = state.items[state.currentIndex];
+			if (!item) return;
+			const slug = item.slug || `item-${state.currentIndex}`;
+			history.replaceState(null, "", `#${slug}`);
+		};
+
+		/**
+		 * Remove the hash from the URL.
+		 */
+		const clearHash = () => {
+			history.replaceState(null, "", window.location.pathname + window.location.search);
+		};
+
+		/**
+		 * Find the index of an item by its slug.
+		 */
+		const findIndexBySlug = (slug: string): number => {
+			return state.items.findIndex((item) => item.slug === slug);
 		};
 
 		const createLightbox = (): HTMLDivElement => {
@@ -370,7 +448,16 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 						<div class="wall-lightbox-spinner"></div>
 					</div>
 					<div class="wall-lightbox-info">
-						<p class="description"></p>
+						<p class="artwork-artist"></p>
+						<h2 class="artwork-title"></h2>
+						<dl class="artwork-details">
+							<dt>Date of creation</dt>
+							<dd class="detail-date"></dd>
+							<dt>Medium</dt>
+							<dd class="detail-medium"></dd>
+							<dt>Size</dt>
+							<dd class="detail-size"></dd>
+						</dl>
 						<a class="inquire-btn" href="mailto:art@tangorenholf.com">Inquire</a>
 						<div class="nav-row">
 							<button class="prev-btn" type="button">Prev</button>
@@ -415,12 +502,16 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 
 			const img = overlay.querySelector(".wall-lightbox-image img") as HTMLImageElement;
 			const spinner = overlay.querySelector(".wall-lightbox-spinner") as HTMLDivElement;
-			const desc = overlay.querySelector(".wall-lightbox-info .description") as HTMLElement;
+			const artistEl = overlay.querySelector(".wall-lightbox-info .artwork-artist") as HTMLElement;
+			const titleEl = overlay.querySelector(".wall-lightbox-info .artwork-title") as HTMLElement;
+			const dateEl = overlay.querySelector(".wall-lightbox-info .detail-date") as HTMLElement;
+			const mediumEl = overlay.querySelector(".wall-lightbox-info .detail-medium") as HTMLElement;
+			const sizeEl = overlay.querySelector(".wall-lightbox-info .detail-size") as HTMLElement;
 			const counter = overlay.querySelector(".nav-row .counter") as HTMLElement;
 			const prevBtn = overlay.querySelector(".nav-row .prev-btn") as HTMLButtonElement;
 			const nextBtn = overlay.querySelector(".nav-row .next-btn") as HTMLButtonElement;
 
-			// Скидаємо стан для анімації та показуємо спінер
+			// Reset state for animation and show spinner
 			img.style.opacity = "0";
 			spinner?.classList.add("visible");
 
@@ -431,7 +522,18 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 
 			img.src = item.image;
 			img.alt = item.title;
-			desc.textContent = item.description;
+			artistEl.textContent = item.artist;
+			titleEl.textContent = item.title;
+
+			const hasDetails = item.dateOfCreation || item.medium || item.size;
+			const detailsContainer = overlay.querySelector(".wall-lightbox-info .artwork-details") as HTMLElement;
+			if (detailsContainer) {
+				detailsContainer.style.display = hasDetails ? "grid" : "none";
+			}
+
+			dateEl.textContent = item.dateOfCreation || "—";
+			mediumEl.textContent = item.medium || "—";
+			sizeEl.textContent = item.size || "—";
 			counter.textContent = `${state.currentIndex + 1} / ${state.items.length}`;
 
 			const isFirst = state.currentIndex === 0;
@@ -440,6 +542,7 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 			nextBtn.disabled = isLast;
 
 			preloadAdjacent();
+			updateHash();
 		};
 
 		const getScrollbarWidth = (): number => {
@@ -471,8 +574,9 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 			state.isOpen = false;
 			document.body.style.overflow = "";
 			document.body.style.paddingRight = "";
+			clearHash();
 
-			// Clear image and description after fade-out transition completes
+			// Clear content after fade-out transition completes
 			state.overlay.addEventListener("transitionend", () => {
 				if (!state.overlay?.classList.contains("is-open")) {
 					const img = state.overlay.querySelector(".wall-lightbox-image img") as HTMLImageElement;
@@ -480,8 +584,10 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 						img.style.opacity = "0";
 						img.src = "";
 					}
-					const desc = state.overlay.querySelector(".wall-lightbox-info .description") as HTMLElement;
-					if (desc) desc.textContent = "";
+					const artistEl = state.overlay.querySelector(".wall-lightbox-info .artwork-artist") as HTMLElement;
+					const titleEl = state.overlay.querySelector(".wall-lightbox-info .artwork-title") as HTMLElement;
+					if (artistEl) artistEl.textContent = "";
+					if (titleEl) titleEl.textContent = "";
 				}
 			}, { once: true });
 		};
@@ -511,6 +617,18 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 			}
 		};
 
+		/**
+		 * Handle hash changes — open lightbox for the matching artwork slug.
+		 */
+		const handleHashChange = () => {
+			const hash = window.location.hash.replace("#", "");
+			if (!hash) return;
+			const index = findIndexBySlug(hash);
+			if (index >= 0) {
+				openLightbox(index);
+			}
+		};
+
 		const initWall = () => {
 			// Collect all items from the DOM
 			const thumbs = document.querySelectorAll<HTMLButtonElement>(".wall-thumb");
@@ -520,6 +638,11 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 					image: btn.dataset.wallImage || "",
 					title: btn.dataset.wallTitle || "Untitled",
 					description: btn.dataset.wallDescription || "",
+					artist: btn.dataset.wallArtist || "",
+					dateOfCreation: btn.dataset.wallDate || "",
+					medium: btn.dataset.wallMedium || "",
+					size: btn.dataset.wallSize || "",
+					slug: btn.dataset.wallSlug || "",
 				});
 			});
 
@@ -568,7 +691,13 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 						return;
 					}
 				});
+
+				// Listen for hash changes
+				window.addEventListener("hashchange", handleHashChange);
 			}
+
+			// Check if there's a hash on initial load to open a specific artwork
+			handleHashChange();
 		};
 
 		const cleanupWall = () => {

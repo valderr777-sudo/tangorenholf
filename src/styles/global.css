@@ -164,6 +164,10 @@ body.menu-open .site-header {
 	-webkit-backdrop-filter: none;
 }
 
+.home-page.menu-open .menu-toggle {
+	color: var(--color-secondary);
+}
+
 .site-logo {
 	display: inline-flex;
 	align-items: center;

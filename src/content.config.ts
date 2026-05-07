@@ -7,6 +7,10 @@ const wall = defineCollection({
 		title: z.string(),
 		image: z.string(),
 		description: z.string(),
+		artist: z.string(),
+		dateOfCreation: z.string(),
+		medium: z.string(),
+		size: z.string(),
 	}),
 });
 

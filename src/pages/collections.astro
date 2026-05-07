@@ -22,7 +22,7 @@ const images = await Promise.all(
 images.sort((a, b) => a.num - b.num);
 ---
 
-<BaseLayout title="Collections | Tangoren Holf">
+<BaseLayout title="Collections | Tangoren Holf" description="Browse the Tangoren Holf collection — a curated gallery of art installations showcasing our portfolio of residential and commercial interior design projects.">
 	<section class="collection-gallery" aria-label="Collections gallery" id="collection-gallery">
 		{images.map((img, index) => (
 			<button
