@@ -755,10 +755,6 @@ p {
 		padding: 90px 24px;
 	}
 
-	.hero-logo {
-		width: min(27vw, 128px);
-	}
-
 	.site-footer {
 		height: 90px;
 		min-height: 90px;
