@@ -333,6 +333,11 @@ body.menu-open .mobile-menu {
 	background-size: cover;
 	opacity: 0;
 	animation: hero-crossfade 18s infinite;
+	animation-play-state: paused;
+}
+
+.hero-slideshow.running .hero-slide {
+	animation-play-state: running;
 }
 
 .hero-slide--1 { animation-delay: 0s; }

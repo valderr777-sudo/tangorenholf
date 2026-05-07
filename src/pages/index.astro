@@ -24,7 +24,7 @@ const optimizedImages = await Promise.all(
 		<link rel="preload" href={optimizedImages[0].src} as="image" fetchpriority="high" />
 	</Fragment>
 
-	<div id="preloader" class="preloader" aria-hidden="true">
+	<div id="preloader" class="preloader" aria-hidden="true" slot="preloader">
 		<img src="/images/TH-LOGO.svg" alt="" class="preloader-logo" />
 	</div>
 
@@ -83,12 +83,21 @@ const optimizedImages = await Promise.all(
 <script>
 	let preloaderShownThisSession = false;
 
+	function startSlideshow() {
+		const slideshow = document.querySelector('.hero-slideshow');
+		if (slideshow) slideshow.classList.add('running');
+	}
+
 	function initPreloader() {
 		const preloader = document.getElementById('preloader');
-		if (!preloader) return;
+		if (!preloader) {
+			startSlideshow();
+			return;
+		}
 
 		if (preloaderShownThisSession) {
 			preloader.classList.add('is-hidden');
+			startSlideshow();
 			return;
 		}
 
@@ -99,6 +108,7 @@ const optimizedImages = await Promise.all(
 
 			if (!isReload && hasVisited) {
 				preloader.classList.add('is-hidden');
+				startSlideshow();
 				return;
 			}
 
@@ -110,6 +120,7 @@ const optimizedImages = await Promise.all(
 				preloader.addEventListener('animationend', () => {
 					preloader.classList.add('is-hidden');
 					preloader.classList.remove('is-fading');
+					startSlideshow();
 				}, { once: true });
 			};
 
@@ -129,6 +140,7 @@ const optimizedImages = await Promise.all(
 			}
 		} catch {
 			preloader.classList.add('is-hidden');
+			startSlideshow();
 		}
 	}
 

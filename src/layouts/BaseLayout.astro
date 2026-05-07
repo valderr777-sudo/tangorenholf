@@ -76,6 +76,8 @@ const navItems = [
 	</head>
 
 	<body class={bodyClass}>
+		<slot name="preloader" />
+
 		<header class="site-header site-header--topbar" data-site-header>
 			<a class="site-logo" href="/" aria-label="Tangoren Holf home">
 				<img src={headerLogoSrc} alt="Tangoren Holf" />
