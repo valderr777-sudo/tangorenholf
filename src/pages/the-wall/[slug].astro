@@ -108,6 +108,8 @@ const breadcrumbSchema = {
 	description={pageDescription}
 	ogImage={lightboxSrc}
 	ogImageAlt={entry.data.title}
+	ogImageWidth={original?.width || 1200}
+	ogImageHeight={original?.height || 630}
 >
 	<Fragment slot="head">
 		<link rel="canonical" href={Astro.url.href} />
