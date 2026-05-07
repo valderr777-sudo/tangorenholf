@@ -1,5 +1,18 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getImage } from "astro:assets";
+
+import img18 from "../assets/images/Collections/18.jpg";
+import img16 from "../assets/images/Collections/16.jpg";
+import img19 from "../assets/images/Collections/19.jpg";
+import img20 from "../assets/images/Collections/20.jpg";
+import img15 from "../assets/images/Collections/15.jpg";
+import img9 from "../assets/images/Collections/9.jpg";
+
+const images = [img18, img16, img19, img20, img15, img9];
+const optimizedImages = await Promise.all(
+	images.map(img => getImage({ src: img, format: 'webp', width: 1920 }))
+);
 ---
 
 <BaseLayout
@@ -8,13 +21,21 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 	bodyClass="home-page"
 >
 	<Fragment slot="head">
-		<link rel="preload" href="https://static.wixstatic.com/media/934aa2_a3c2adbdc4e042d8a20dc02149b85701~mv2.jpg" as="image" fetchpriority="high" />
+		<link rel="preload" href={optimizedImages[0].src} as="image" fetchpriority="high" />
 	</Fragment>
+
+	<div id="preloader" class="preloader" aria-hidden="true">
+		<img src="/images/TH-LOGO.svg" alt="" class="preloader-logo" />
+	</div>
+
 	<section class="hero hero--home">
 		<div class="hero-slideshow" aria-hidden="true">
-			<div class="hero-slide hero-slide--one"></div>
-			<div class="hero-slide hero-slide--two"></div>
-			<div class="hero-slide hero-slide--three"></div>
+			{optimizedImages.map((img, index) => (
+				<div 
+					class={`hero-slide hero-slide--${index + 1}`}
+					style={`background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('${img.src}');`}
+				></div>
+			))}
 		</div>
 		<div class="hero__overlay"></div>
 		<div class="hero__content hero__content--center">
@@ -24,3 +45,90 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 		</div>
 	</section>
 </BaseLayout>
+
+<style>
+	.preloader {
+		position: fixed;
+		inset: 0;
+		z-index: 10001;
+		display: none;
+		align-items: center;
+		justify-content: center;
+		background: #ffffff;
+	}
+
+	.preloader.is-visible {
+		display: flex;
+	}
+
+	.preloader.is-fading {
+		animation: preloader-fadeout 0.7s ease forwards;
+		pointer-events: none;
+	}
+
+	.preloader-logo {
+		display: block;
+		width: clamp(88px, 11.2vw, 168px);
+		max-width: calc(100vw - 48px);
+		height: auto;
+	}
+
+	@keyframes preloader-fadeout {
+		to {
+			opacity: 0;
+		}
+	}
+</style>
+
+<script>
+	function shouldShowPreloader(): boolean {
+		try {
+			const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+			const isReload = navEntry?.type === 'reload';
+			const hasVisited = sessionStorage.getItem('visited_home');
+			if (isReload) return true;
+			if (!hasVisited) return true;
+			return false;
+		} catch {
+			return true;
+		}
+	}
+
+	function initPreloader() {
+		const preloader = document.getElementById('preloader');
+		if (!preloader) return;
+		if (preloader.dataset.handled === 'true') return;
+
+		if (shouldShowPreloader()) {
+			preloader.dataset.handled = 'true';
+			try { sessionStorage.setItem('visited_home', '1'); } catch {}
+
+			preloader.classList.add('is-visible');
+
+			const startFadeout = () => {
+				preloader.classList.add('is-fading');
+				preloader.addEventListener('animationend', () => {
+					preloader.classList.remove('is-visible', 'is-fading');
+				}, { once: true });
+			};
+
+			const preloadLink = document.querySelector<HTMLLinkElement>('link[rel="preload"][as="image"]');
+			if (preloadLink?.href) {
+				const probe = new Image();
+				probe.src = preloadLink.href;
+				if (probe.complete) {
+					setTimeout(startFadeout, 400);
+				} else {
+					probe.onload = () => setTimeout(startFadeout, 200);
+					probe.onerror = () => setTimeout(startFadeout, 200);
+					setTimeout(startFadeout, 3000);
+				}
+			} else {
+				setTimeout(startFadeout, 1200);
+			}
+		}
+	}
+
+	initPreloader();
+	document.addEventListener('astro:page-load', initPreloader);
+</script>

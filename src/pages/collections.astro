@@ -61,6 +61,7 @@ images.sort((a, b) => a.num - b.num);
 			border: 0;
 			background: none;
 			cursor: pointer;
+			overflow: hidden;
 		}
 
 		.gallery-thumb img {
@@ -69,6 +70,11 @@ images.sort((a, b) => a.num - b.num);
 			height: 100%;
 			object-fit: cover;
 			background: var(--color-neutral);
+			transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+		}
+
+		.gallery-thumb:hover img {
+			transform: scale(1.04);
 		}
 
 		/* Lightbox overlay */

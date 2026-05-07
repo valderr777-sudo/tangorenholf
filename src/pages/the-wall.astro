@@ -70,6 +70,7 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 			border: 0;
 			background: none;
 			cursor: pointer;
+			overflow: hidden;
 		}
 
 		.wall-thumb img {
@@ -78,6 +79,11 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 			height: 100%;
 			object-fit: cover;
 			background: var(--color-neutral, #f2f2f2);
+			transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+		}
+
+		.wall-thumb:hover img {
+			transform: scale(1.04);
 		}
 
 		.sr-only {
@@ -282,26 +288,42 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 		}
 
 		@media (max-width: 768px) {
+			.wall-lightbox {
+				padding: 64px 20px 32px 20px;
+				align-items: flex-start;
+				overflow-y: auto;
+			}
+
+			.wall-lightbox-close {
+				position: fixed;
+				top: 12px;
+				right: 12px;
+				background: #ffffff;
+				border-radius: 50%;
+			}
+
 			.wall-lightbox-inner {
 				flex-direction: column;
-				gap: 16px;
+				gap: 20px;
+				margin: 0 auto;
 			}
 
 			.wall-lightbox-image {
 				flex: none;
 				width: 100%;
-				max-height: 50vh;
+				max-height: 55vh;
 			}
 
 			.wall-lightbox-image img {
-				max-height: 50vh;
+				max-height: 55vh;
 			}
 
 			.wall-lightbox-info {
 				flex: none;
 				width: 100%;
-				padding: 24px 20px;
-				max-height: 40vh;
+				padding: 0 0 24px 0;
+				max-height: none;
+				overflow-y: visible;
 			}
 		}
 	</style>
