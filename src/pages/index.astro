@@ -73,6 +73,12 @@ const optimizedImages = await Promise.all(
 		height: auto;
 	}
 
+	@media (max-width: 900px) {
+		.preloader-logo {
+			width: min(27vw, 128px);
+		}
+	}
+
 	@keyframes preloader-fadeout {
 		to {
 			opacity: 0;
