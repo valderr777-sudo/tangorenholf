@@ -340,7 +340,10 @@ body.menu-open .mobile-menu {
 	animation-play-state: running;
 }
 
-.hero-slide--1 { animation-delay: 0s; }
+.hero-slide--1 {
+	opacity: 1;
+	animation: none;
+}
 .hero-slide--2 { animation-delay: 3s; }
 .hero-slide--3 { animation-delay: 6s; }
 .hero-slide--4 { animation-delay: 9s; }
