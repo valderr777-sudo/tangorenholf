@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const sent = Astro.url.searchParams.get("sent");
 ---
 
 <BaseLayout title="Contact | Tangoren Holf" description="Get in touch with Tangoren Holf. Contact our team for art consulting, interior design services, or inquiries about our collections and gallery.">
@@ -8,10 +10,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 		<form
 			class="contact-form"
-			action="https://formspree.io/f/xjgzyjoj"
+			action="/api/contact"
 			method="POST"
 		>
-			<input type="hidden" name="_subject" value="New message from Tangoren Holf website" />
 			<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none" />
 			<div class="contact-form__row">
 				<label class="contact-form__field">
@@ -42,6 +43,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 			<button type="submit">SUBMIT</button>
 		</form>
+		{sent === "1" && <p class="contact-email">Message sent successfully.</p>}
+		{sent === "0" && <p class="contact-email">Could not send your message. Please try again.</p>}
 
 		<p class="contact-email">Email art@tangorenholf.com</p>
 
