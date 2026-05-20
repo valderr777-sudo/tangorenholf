@@ -696,10 +696,10 @@ p {
 	height: 100%;
 }
 
-.contact-social--instagram {
+/* .contact-social--instagram {
 	width: 42px;
 	height: 42px;
-}
+} */
 
 .contact-social:hover {
 	color: var(--color-accent);
