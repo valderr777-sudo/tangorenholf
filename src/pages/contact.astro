@@ -6,15 +6,21 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 	<section class="contact-panel">
 		<h1 class="contact-heading">CONTACT US</h1>
 
-		<form class="contact-form">
+		<form
+			class="contact-form"
+			action="https://formspree.io/f/xjgzyjoj"
+			method="POST"
+		>
+			<input type="hidden" name="_subject" value="New message from Tangoren Holf website" />
+			<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none" />
 			<div class="contact-form__row">
 				<label class="contact-form__field">
 					<span>First name*</span>
-					<input type="text" name="firstName" autocomplete="given-name" />
+					<input type="text" name="firstName" autocomplete="given-name" required />
 				</label>
 				<label class="contact-form__field">
 					<span>Last name*</span>
-					<input type="text" name="lastName" autocomplete="family-name" />
+					<input type="text" name="lastName" autocomplete="family-name" required />
 				</label>
 			</div>
 
@@ -25,13 +31,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 				</label>
 				<label class="contact-form__field">
 					<span>Phone*</span>
-					<input type="tel" name="phone" autocomplete="tel" />
+					<input type="tel" name="phone" autocomplete="tel" required />
 				</label>
 			</div>
 
 			<label class="contact-form__field contact-form__field--full">
 				<span>Message*</span>
-				<textarea name="message" rows="2"></textarea>
+				<textarea name="message" rows="2" required></textarea>
 			</label>
 
 			<button type="submit">SUBMIT</button>
@@ -41,19 +47,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 		<div class="contact-socials">
 			<a class="contact-social contact-social--instagram" href="#" aria-label="Instagram">
-				<svg data-bbox="3 3 44 44" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-					<g>
-						<path d="M16 3C8.832 3 3 8.832 3 16v18c0 7.168 5.832 13 13 13h18c7.168 0 13-5.832 13-13V16c0-7.168-5.832-13-13-13H16zm0 2h18c6.086 0 11 4.914 11 11v18c0 6.086-4.914 11-11 11H16C9.914 45 5 40.086 5 34V16C5 9.914 9.914 5 16 5zm21 6a2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2 2 2 0 0 0-2-2zm-12 3c-6.063 0-11 4.937-11 11s4.937 11 11 11 11-4.937 11-11-4.937-11-11-11zm0 2c4.982 0 9 4.018 9 9s-4.018 9-9 9-9-4.018-9-9 4.018-9 9-9z"></path>
-					</g>
-				</svg>
+				<img src="/images/social/instagram.svg" alt="" aria-hidden="true" />
 			</a>
 			<a class="contact-social" href="https://www.facebook.com/profile.php?id=61581501545171" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
-				<svg data-bbox="2 2 84 84" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 88" fill="none">
-					<g>
-						<path stroke-width="4" stroke="currentColor" d="M86 26v36c0 13.255-10.745 24-24 24H26C12.745 86 2 75.255 2 62V26C2 12.745 12.745 2 26 2h36c13.255 0 24 10.745 24 24z"></path>
-						<path stroke="currentColor" fill="currentColor" d="M49.204 13.496c2.123-.477 5.58-.729 12.296-.512v11.26h-3.252c-3.132.011-5.556.608-6.874 1.89-.689.659-1.166 1.56-1.467 3.159-.298 1.582-.432 3.895-.407 7.426l.004.496H61.5v11h-12v36h-11v-36h-12v-11h12v-6c0-2.967.781-7.249 1.71-9.477.462-1.1 1.215-2.37 2.06-3.528.837-1.146 1.74-2.15 2.507-2.757 1.54-.794 2.293-1.478 4.427-1.957Z"></path>
-					</g>
-				</svg>
+				<img src="/images/social/facebook.svg" alt="" aria-hidden="true" />
 			</a>
 		</div>
 	</section>

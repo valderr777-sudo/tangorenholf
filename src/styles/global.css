@@ -690,6 +690,12 @@ p {
 	height: 100%;
 }
 
+.contact-social img {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
 .contact-social--instagram {
 	width: 42px;
 	height: 42px;
