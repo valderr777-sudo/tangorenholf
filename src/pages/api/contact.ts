@@ -6,6 +6,15 @@ const parseRecipients = (value: string | undefined): string[] =>
 		.map((item) => item.trim())
 		.filter(Boolean);
 
+export const GET: APIRoute = async () =>
+	new Response("Contact API is alive. Use POST to submit the form.", {
+		status: 405,
+		headers: {
+			"Content-Type": "text/plain; charset=utf-8",
+			Allow: "POST",
+		},
+	});
+
 export const POST: APIRoute = async ({ request, redirect }) => {
 	const formData = await request.formData();
 
