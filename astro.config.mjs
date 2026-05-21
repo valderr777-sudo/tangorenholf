@@ -10,6 +10,9 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: "https://tangorenholf.com",
   output: "server",
+  security: {
+    checkOrigin: false,
+  },
   adapter: node({
     mode: "standalone",
   }),
