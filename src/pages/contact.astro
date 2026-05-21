@@ -10,6 +10,7 @@ const sent = Astro.url.searchParams.get("sent");
 
 		<form
 			class="contact-form"
+			id="contact-form"
 			action="/api/contact"
 			method="POST"
 		>
@@ -43,6 +44,7 @@ const sent = Astro.url.searchParams.get("sent");
 
 			<button type="submit">SUBMIT</button>
 		</form>
+		<p class="contact-email" id="contact-form-status" hidden></p>
 		{sent === "1" && <p class="contact-email">Message sent successfully.</p>}
 		{sent === "0" && <p class="contact-email">Could not send your message. Please try again.</p>}
 
@@ -57,4 +59,48 @@ const sent = Astro.url.searchParams.get("sent");
 			</a>
 		</div>
 	</section>
+
+	<script>
+		const form = document.querySelector<HTMLFormElement>("#contact-form");
+		const status = document.querySelector<HTMLElement>("#contact-form-status");
+
+		form?.addEventListener("submit", async (event) => {
+			event.preventDefault();
+
+			if (!status) return;
+
+			const submitButton = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+			const formData = new FormData(form);
+
+			status.hidden = false;
+			status.textContent = "Sending...";
+			submitButton?.setAttribute("disabled", "true");
+
+			try {
+				const response = await fetch(form.action, {
+					method: "POST",
+					body: formData,
+					headers: {
+						Accept: "application/json",
+					},
+					redirect: "manual",
+				});
+
+				if (response.ok || response.status === 303 || response.type === "opaqueredirect") {
+					status.textContent = "Message sent successfully.";
+					form.reset();
+					return;
+				}
+
+				const body = await response.text();
+				console.error("[contact] Submit failed", response.status, body);
+				status.textContent = "Could not send your message. Please try again.";
+			} catch (error) {
+				console.error("[contact] Submit error", error);
+				status.textContent = "Could not send your message. Please try again.";
+			} finally {
+				submitButton?.removeAttribute("disabled");
+			}
+		});
+	</script>
 </BaseLayout>
