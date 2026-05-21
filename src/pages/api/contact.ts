@@ -9,9 +9,12 @@ const parseRecipients = (value: string | undefined): string[] =>
 export const GET: APIRoute = async ({ redirect }) => redirect("/contact", 303);
 
 export const POST: APIRoute = async ({ request, redirect }) => {
+	console.info("[contact] POST received");
+
 	const formData = await request.formData();
 
 	if (String(formData.get("_gotcha") ?? "").trim() !== "") {
+		console.info("[contact] Honeypot field filled, treating as successful no-op");
 		return redirect("/contact?sent=1", 303);
 	}
 
@@ -22,6 +25,12 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 	const message = String(formData.get("message") ?? "").trim();
 
 	if (!firstName || !lastName || !phone || !message) {
+		console.warn("[contact] Validation failed", {
+			hasFirstName: Boolean(firstName),
+			hasLastName: Boolean(lastName),
+			hasPhone: Boolean(phone),
+			hasMessage: Boolean(message),
+		});
 		return redirect("/contact?sent=0", 303);
 	}
 
@@ -31,9 +40,20 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 	const senderName = import.meta.env.CONTACT_FROM_NAME || "Tangoren Holf Website";
 
 	if (!apiKey || !senderEmail || recipients.length === 0) {
-		console.error("Missing Brevo env vars: BREVO_API_KEY, CONTACT_FROM_EMAIL, CONTACT_TO");
+		console.error("[contact] Missing Brevo env vars", {
+			hasBrevoApiKey: Boolean(apiKey),
+			hasContactFromEmail: Boolean(senderEmail),
+			contactToCount: recipients.length,
+		});
 		return redirect("/contact?sent=0", 303);
 	}
+
+	console.info("[contact] Sending via Brevo", {
+		senderEmail,
+		senderName,
+		recipientCount: recipients.length,
+		hasReplyTo: Boolean(email),
+	});
 
 	const textLines = [
 		`First name: ${firstName}`,
@@ -65,9 +85,13 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 
 	if (!response.ok) {
 		const body = await response.text();
-		console.error("Brevo send failed:", response.status, body);
+		console.error("[contact] Brevo send failed", {
+			status: response.status,
+			body,
+		});
 		return redirect("/contact?sent=0", 303);
 	}
 
+	console.info("[contact] Brevo send succeeded");
 	return redirect("/contact?sent=1", 303);
 };
