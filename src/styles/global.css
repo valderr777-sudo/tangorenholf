@@ -660,6 +660,20 @@ p {
 	text-transform: uppercase;
 }
 
+.contact-form__actions {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+	min-height: 24px;
+}
+
+.contact-form__status {
+	margin: 0;
+	font-size: 0.82rem;
+	line-height: 1.4;
+	letter-spacing: 0;
+}
+
 .contact-email {
 	margin: 48px 0 0;
 	font-size: 0.95rem;
@@ -804,6 +818,12 @@ p {
 
 	.contact-form__row {
 		grid-template-columns: 1fr;
+	}
+
+	.contact-form__actions {
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 8px;
 	}
 
 	.services-grid__items {

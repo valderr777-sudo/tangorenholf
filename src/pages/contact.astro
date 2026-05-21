@@ -42,9 +42,11 @@ const sent = Astro.url.searchParams.get("sent");
 				<textarea name="message" rows="2" required></textarea>
 			</label>
 
-			<button type="submit">SUBMIT</button>
+			<div class="contact-form__actions">
+				<button type="submit">SUBMIT</button>
+				<p class="contact-form__status" id="contact-form-status" hidden></p>
+			</div>
 		</form>
-		<p class="contact-email" id="contact-form-status" hidden></p>
 		{sent === "1" && <p class="contact-email">Message sent successfully.</p>}
 		{sent === "0" && <p class="contact-email">Could not send your message. Please try again.</p>}
 
