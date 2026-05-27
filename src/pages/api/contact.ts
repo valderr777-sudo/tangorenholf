@@ -37,7 +37,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 	const apiKey = import.meta.env.BREVO_API_KEY;
 	const recipients = parseRecipients(import.meta.env.CONTACT_TO);
 	const senderEmail = import.meta.env.CONTACT_FROM_EMAIL;
-	const senderName = import.meta.env.CONTACT_FROM_NAME || "Tangoren Holf Website";
+	const senderName = import.meta.env.CONTACT_FROM_NAME || "TANGOREN HOLF Website";
 
 	if (!apiKey || !senderEmail || recipients.length === 0) {
 		console.error("[contact] Missing Brevo env vars", {
@@ -78,7 +78,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 			},
 			to: recipients.map((recipient) => ({ email: recipient })),
 			...(email ? { replyTo: { email } } : {}),
-			subject: "New message from Tangoren Holf website",
+			subject: "New message from TANGOREN HOLF website",
 			textContent: textLines.join("\n"),
 		}),
 	});

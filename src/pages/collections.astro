@@ -14,7 +14,7 @@ const images = await Promise.all(
 		return {
 			original,
 			lightboxSrc: lightboxImage.src,
-			alt: "Tangoren Holf collection installation",
+			alt: "TANGOREN HOLF collection installation",
 			num
 		};
 	})
@@ -22,7 +22,7 @@ const images = await Promise.all(
 images.sort((a, b) => a.num - b.num);
 ---
 
-<BaseLayout title="Collections | Tangoren Holf" description="Browse the Tangoren Holf collection — a curated gallery of art installations showcasing our portfolio of residential and commercial interior design projects.">
+<BaseLayout title="Collections | TANGOREN HOLF" description="Browse the TANGOREN HOLF collection — a curated gallery of art installations showcasing our portfolio of residential and commercial interior design projects.">
 	<Fragment slot="head">
 		<script type="application/ld+json" is:inline>
 			{JSON.stringify({
@@ -30,13 +30,13 @@ images.sort((a, b) => a.num - b.num);
 				"@type": "CollectionPage",
 				"@id": Astro.url.href + "#collectionpage",
 				"url": Astro.url.href,
-				"name": "Collections | Tangoren Holf",
-				"description": "Browse the Tangoren Holf collection — a curated gallery of art installations showcasing our portfolio of residential and commercial interior design projects.",
+				"name": "Collections | TANGOREN HOLF",
+				"description": "Browse the TANGOREN HOLF collection — a curated gallery of art installations showcasing our portfolio of residential and commercial interior design projects.",
 				"hasPart": images.map((img, i) => ({
 					"@type": "ImageObject",
 					"@id": Astro.url.href + "#image-" + (i + 1),
 					"url": new URL(img.lightboxSrc, Astro.url).href,
-					"name": "Tangoren Holf collection installation " + (i + 1),
+					"name": "TANGOREN HOLF collection installation " + (i + 1),
 					"position": i + 1,
 				})),
 			})}
