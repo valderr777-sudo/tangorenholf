@@ -1,6 +1,6 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
-import node from '@astrojs/node';
+import { defineConfig, sessionDrivers } from 'astro/config';
+import cloudflare from '@astrojs/cloudflare';
 
 import tailwindcss from '@tailwindcss/vite';
 
@@ -13,9 +13,12 @@ export default defineConfig({
   security: {
     checkOrigin: false,
   },
-  adapter: node({
-    mode: "standalone",
+  adapter: cloudflare({
+    imageService: "compile",
   }),
+  session: {
+    driver: sessionDrivers.lruCache(),
+  },
   devToolbar: {
     enabled: false
   },
