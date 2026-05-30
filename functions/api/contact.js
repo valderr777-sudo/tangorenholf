@@ -1,21 +1,22 @@
-import type { APIRoute } from "astro";
-
-const parseRecipients = (value: string | undefined): string[] =>
+const parseRecipients = (value) =>
 	(value ?? "")
 		.split(",")
 		.map((item) => item.trim())
 		.filter(Boolean);
 
-export const GET: APIRoute = async ({ redirect }) => redirect("/contact", 303);
+const redirectToContact = (request, sent) =>
+	Response.redirect(new URL(`/contact?sent=${sent}`, request.url), 303);
 
-export const POST: APIRoute = async ({ request, redirect }) => {
+export const onRequestGet = async ({ request }) => redirectToContact(request, 0);
+
+export const onRequestPost = async ({ request, env }) => {
 	console.info("[contact] POST received");
 
 	const formData = await request.formData();
 
 	if (String(formData.get("_gotcha") ?? "").trim() !== "") {
 		console.info("[contact] Honeypot field filled, treating as successful no-op");
-		return redirect("/contact?sent=1", 303);
+		return redirectToContact(request, 1);
 	}
 
 	const firstName = String(formData.get("firstName") ?? "").trim();
@@ -31,13 +32,13 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 			hasPhone: Boolean(phone),
 			hasMessage: Boolean(message),
 		});
-		return redirect("/contact?sent=0", 303);
+		return redirectToContact(request, 0);
 	}
 
-	const apiKey = import.meta.env.BREVO_API_KEY;
-	const recipients = parseRecipients(import.meta.env.CONTACT_TO);
-	const senderEmail = import.meta.env.CONTACT_FROM_EMAIL;
-	const senderName = import.meta.env.CONTACT_FROM_NAME || "TANGOREN HOLF Website";
+	const apiKey = env.BREVO_API_KEY;
+	const recipients = parseRecipients(env.CONTACT_TO);
+	const senderEmail = env.CONTACT_FROM_EMAIL;
+	const senderName = env.CONTACT_FROM_NAME || "TANGOREN HOLF Website";
 
 	if (!apiKey || !senderEmail || recipients.length === 0) {
 		console.error("[contact] Missing Brevo env vars", {
@@ -45,7 +46,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 			hasContactFromEmail: Boolean(senderEmail),
 			contactToCount: recipients.length,
 		});
-		return redirect("/contact?sent=0", 303);
+		return redirectToContact(request, 0);
 	}
 
 	console.info("[contact] Sending via Brevo", {
@@ -89,9 +90,9 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 			status: response.status,
 			body,
 		});
-		return redirect("/contact?sent=0", 303);
+		return redirectToContact(request, 0);
 	}
 
 	console.info("[contact] Brevo send succeeded");
-	return redirect("/contact?sent=1", 303);
+	return redirectToContact(request, 1);
 };

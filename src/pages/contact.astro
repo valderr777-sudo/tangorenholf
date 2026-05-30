@@ -1,7 +1,5 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-
-const sent = Astro.url.searchParams.get("sent");
 ---
 
 <BaseLayout title="Contact | TANGOREN HOLF" description="Get in touch with TANGOREN HOLF. Contact our team for art consulting, interior design services, or inquiries about our collections and gallery.">
@@ -47,9 +45,6 @@ const sent = Astro.url.searchParams.get("sent");
 				<p class="contact-form__status" id="contact-form-status" hidden></p>
 			</div>
 		</form>
-		{sent === "1" && <p class="contact-email">Message sent successfully.</p>}
-		{sent === "0" && <p class="contact-email">Could not send your message. Please try again.</p>}
-
 		<p class="contact-email">Email art@tangorenholf.com</p>
 
 		<div class="contact-socials">
@@ -62,6 +57,20 @@ const sent = Astro.url.searchParams.get("sent");
 	<script>
 		const form = document.querySelector<HTMLFormElement>("#contact-form");
 		const status = document.querySelector<HTMLElement>("#contact-form-status");
+
+		if (status) {
+			const sent = new URLSearchParams(window.location.search).get("sent");
+
+			if (sent === "1") {
+				status.hidden = false;
+				status.textContent = "Message sent successfully.";
+			}
+
+			if (sent === "0") {
+				status.hidden = false;
+				status.textContent = "Could not send your message. Please try again.";
+			}
+		}
 
 		form?.addEventListener("submit", async (event) => {
 			event.preventDefault();
