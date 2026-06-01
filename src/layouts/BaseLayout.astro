@@ -121,12 +121,8 @@ const breadcrumbSchema = {
 		<meta name="twitter:image:alt" content={ogImageAlt} />
 
 		<!-- Structured Data -->
-		<script type="application/ld+json" is:inline>
-			{JSON.stringify(organizationSchema)}
-		</script>
-		<script type="application/ld+json" is:inline>
-			{JSON.stringify(websiteSchema)}
-		</script>
+		<script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+		<script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
 
 		<title transition:animate="none">{title}</title>
 		<slot name="head" />

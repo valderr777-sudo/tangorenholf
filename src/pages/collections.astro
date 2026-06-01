@@ -20,37 +20,37 @@ const images = await Promise.all(
 	})
 );
 images.sort((a, b) => a.num - b.num);
+
+const collectionPageSchema = {
+	"@context": "https://schema.org",
+	"@type": "CollectionPage",
+	"@id": Astro.url.href + "#collectionpage",
+	"url": Astro.url.href,
+	"name": "Collections | TANGOREN HOLF",
+	"description": "Browse the TANGOREN HOLF collection — a curated gallery of art installations showcasing our portfolio of residential and commercial interior design projects.",
+	"hasPart": images.map((img, i) => ({
+		"@type": "ImageObject",
+		"@id": Astro.url.href + "#image-" + (i + 1),
+		"url": new URL(img.lightboxSrc, Astro.url).href,
+		"name": "TANGOREN HOLF collection installation " + (i + 1),
+		"position": i + 1,
+	})),
+};
+
+const breadcrumbSchema = {
+	"@context": "https://schema.org",
+	"@type": "BreadcrumbList",
+	"itemListElement": [
+		{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tangorenholf.com/" },
+		{ "@type": "ListItem", "position": 2, "name": "Collections", "item": Astro.url.href },
+	],
+};
 ---
 
 <BaseLayout title="Collections | TANGOREN HOLF" description="Browse the TANGOREN HOLF collection — a curated gallery of art installations showcasing our portfolio of residential and commercial interior design projects.">
 	<Fragment slot="head">
-		<script type="application/ld+json" is:inline>
-			{JSON.stringify({
-				"@context": "https://schema.org",
-				"@type": "CollectionPage",
-				"@id": Astro.url.href + "#collectionpage",
-				"url": Astro.url.href,
-				"name": "Collections | TANGOREN HOLF",
-				"description": "Browse the TANGOREN HOLF collection — a curated gallery of art installations showcasing our portfolio of residential and commercial interior design projects.",
-				"hasPart": images.map((img, i) => ({
-					"@type": "ImageObject",
-					"@id": Astro.url.href + "#image-" + (i + 1),
-					"url": new URL(img.lightboxSrc, Astro.url).href,
-					"name": "TANGOREN HOLF collection installation " + (i + 1),
-					"position": i + 1,
-				})),
-			})}
-		</script>
-		<script type="application/ld+json" is:inline>
-			{JSON.stringify({
-				"@context": "https://schema.org",
-				"@type": "BreadcrumbList",
-				"itemListElement": [
-					{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tangorenholf.com/" },
-					{ "@type": "ListItem", "position": 2, "name": "Collections", "item": Astro.url.href },
-				],
-			})}
-		</script>
+		<script type="application/ld+json" set:html={JSON.stringify(collectionPageSchema)} />
+		<script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 	</Fragment>
 	<section class="collection-gallery" aria-label="Collections gallery" id="collection-gallery">
 		{images.map((img, index) => (

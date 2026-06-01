@@ -46,40 +46,40 @@ const processedEntries = await Promise.all(sorted.map(async (entry) => {
 		slug,
 	};
 }));
+
+const collectionPageSchema = {
+	"@context": "https://schema.org",
+	"@type": "CollectionPage",
+	"@id": Astro.url.href + "#collectionpage",
+	"url": Astro.url.href,
+	"name": "The Wall | TANGOREN HOLF",
+	"description": "Explore The Wall — TANGOREN HOLF's curated gallery of available artwork. Discover original pieces from established and emerging artists for your collection.",
+	"hasPart": processedEntries.map((entry, i) => ({
+		"@type": "VisualArtwork",
+		"@id": Astro.url.href + "/" + entry.slug + "#artwork",
+		"name": entry.data.title,
+		"artist": { "@type": "Person", "name": entry.data.artist },
+		"url": new URL("/the-wall/" + entry.slug, Astro.url).href,
+		"image": new URL(entry.lightboxSrc, Astro.url).href,
+		"dateCreated": entry.data.dateOfCreation,
+		"position": i + 1,
+	})),
+};
+
+const breadcrumbSchema = {
+	"@context": "https://schema.org",
+	"@type": "BreadcrumbList",
+	"itemListElement": [
+		{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tangorenholf.com/" },
+		{ "@type": "ListItem", "position": 2, "name": "The Wall", "item": Astro.url.href },
+	],
+};
 ---
 
 <BaseLayout title="The Wall | TANGOREN HOLF" description="Explore The Wall — TANGOREN HOLF's curated gallery of available artwork. Discover original pieces from established and emerging artists for your collection.">
 	<Fragment slot="head">
-		<script type="application/ld+json" is:inline>
-			{JSON.stringify({
-				"@context": "https://schema.org",
-				"@type": "CollectionPage",
-				"@id": Astro.url.href + "#collectionpage",
-				"url": Astro.url.href,
-				"name": "The Wall | TANGOREN HOLF",
-				"description": "Explore The Wall — TANGOREN HOLF's curated gallery of available artwork. Discover original pieces from established and emerging artists for your collection.",
-				"hasPart": processedEntries.map((entry, i) => ({
-					"@type": "VisualArtwork",
-					"@id": Astro.url.href + "/" + entry.slug + "#artwork",
-					"name": entry.data.title,
-					"artist": { "@type": "Person", "name": entry.data.artist },
-					"url": new URL("/the-wall/" + entry.slug, Astro.url).href,
-					"image": new URL(entry.lightboxSrc, Astro.url).href,
-					"dateCreated": entry.data.dateOfCreation,
-					"position": i + 1,
-				})),
-			})}
-		</script>
-		<script type="application/ld+json" is:inline>
-			{JSON.stringify({
-				"@context": "https://schema.org",
-				"@type": "BreadcrumbList",
-				"itemListElement": [
-					{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tangorenholf.com/" },
-					{ "@type": "ListItem", "position": 2, "name": "The Wall", "item": Astro.url.href },
-				],
-			})}
-		</script>
+		<script type="application/ld+json" set:html={JSON.stringify(collectionPageSchema)} />
+		<script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 	</Fragment>
 	<section class="collection-gallery wall-gallery" aria-label="The Wall gallery">
 		{processedEntries.map((entry, index) => (

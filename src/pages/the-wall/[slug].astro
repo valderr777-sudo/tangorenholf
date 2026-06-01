@@ -115,12 +115,8 @@ const breadcrumbSchema = {
 >
 	<Fragment slot="head">
 		<link rel="canonical" href={Astro.url.href} />
-		<script type="application/ld+json" is:inline>
-			{JSON.stringify(visualArtworkSchema)}
-		</script>
-		<script type="application/ld+json" is:inline>
-			{JSON.stringify(breadcrumbSchema)}
-		</script>
+		<script type="application/ld+json" set:html={JSON.stringify(visualArtworkSchema)} />
+		<script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 		<script define:vars={{ redirectUrl }}>
 			// Redirect human users to the gallery page with the popup open.
 			// Googlebot (which doesn't execute JS) will see the static content and index it.
