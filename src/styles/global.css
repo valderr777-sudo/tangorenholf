@@ -168,28 +168,6 @@ main {
 	gap: clamp(20px, 3.4vw, 56px);
 }
 
-.nav-home-icon {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	color: inherit;
-	transition: color 180ms ease;
-}
-
-.nav-home-icon:hover {
-	color: rgba(26, 26, 26, 0.62);
-}
-
-.home-page .nav-home-icon:hover {
-	color: rgba(255, 255, 255, 0.72);
-}
-
-.nav-home-icon svg {
-	display: block;
-	width: 28px;
-	height: 28px;
-}
-
 .desktop-nav a {
 	font-size: 0.75rem;
 	font-weight: 300;
