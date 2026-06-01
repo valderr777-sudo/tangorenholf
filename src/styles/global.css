@@ -177,6 +177,8 @@ body.menu-open .site-header {
 
 .home-page .site-logo {
 	height: 52px;
+	visibility: hidden;
+	pointer-events: none;
 }
 
 .site-logo img {
@@ -539,6 +541,7 @@ p {
 	font-weight: 400;
 	letter-spacing: 0;
 	line-height: 1.5;
+	min-height: calc(2lh);
 }
 
 .collection-gallery {
@@ -644,7 +647,7 @@ p {
 	border: 0;
 	border-bottom: 1px solid rgba(26, 26, 26, 0.42);
 	outline: 0;
-	resize: vertical;
+	resize: none;
 }
 
 .contact-form__field input:focus,
