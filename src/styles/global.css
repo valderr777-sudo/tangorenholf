@@ -496,12 +496,12 @@ p {
 }
 
 .services-grid {
-	width: min(100%, 1400px);
+	width: min(100%, 900px);
 }
 
 .services-grid__heading {
 	max-width: none;
-	margin: 0;
+	margin: 0 0 clamp(24px, 3vh, 40px);
 	font-size: clamp(1.25rem, 2vw, 1.55rem);
 	font-weight: 400;
 	letter-spacing: 0.2em;
