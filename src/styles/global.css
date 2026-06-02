@@ -640,20 +640,21 @@ p {
 	border-bottom-color: var(--color-secondary);
 }
 
+.contact-form__actions {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 18px;
+	min-height: 24px;
+}
+
 .contact-form button {
-	justify-self: end;
 	padding: 0;
 	font-size: 0.75rem;
 	letter-spacing: 0.25em;
 	text-transform: uppercase;
 }
 
-.contact-form__actions {
-	display: flex;
-	align-items: center;
-	gap: 18px;
-	min-height: 24px;
-}
 
 .contact-form__status {
 	margin: 0;
