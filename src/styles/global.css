@@ -496,7 +496,7 @@ p {
 }
 
 .services-grid {
-	width: min(100%, 1220px);
+	width: min(100%, 1400px);
 }
 
 .services-grid__heading {
@@ -513,7 +513,7 @@ p {
 .services-grid__items {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	gap: clamp(8px, 1.2vh, 14px) clamp(36px, 5vw, 84px);
+	gap: clamp(8px, 1.2vh, 14px) clamp(24px, 3vw, 56px);
 	margin: 0;
 	padding: 0 0 0 22px;
 	list-style-type: disc;
@@ -522,11 +522,11 @@ p {
 
 .services-grid__item {
 	display: list-item;
-	font-size: clamp(0.85rem, 1vw, 0.95rem);
+	font-size: clamp(0.75rem, 0.88vw, 0.85rem);
 	font-weight: 400;
 	letter-spacing: 0;
-	line-height: 1.5;
-	min-height: calc(2lh);
+	line-height: 1.4;
+	min-height: auto;
 }
 
 .collection-gallery {
