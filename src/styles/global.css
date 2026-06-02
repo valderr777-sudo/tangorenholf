@@ -501,19 +501,19 @@ p {
 
 .services-grid__heading {
 	max-width: none;
-	margin: 0 0 clamp(18px, 2.5vh, 30px);
+	margin: 0;
 	font-size: clamp(1.25rem, 2vw, 1.55rem);
 	font-weight: 400;
 	letter-spacing: 0.2em;
 	line-height: 1.2;
-	text-align: center;
+	text-align: left;
 	text-transform: uppercase;
 }
 
 .services-grid__items {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: clamp(8px, 1.2vh, 14px) clamp(24px, 3vw, 56px);
+	grid-template-columns: repeat(2, 1fr);
+	gap: clamp(14px, 1.8vh, 22px) clamp(24px, 3vw, 56px);
 	margin: 0;
 	padding: 0 0 0 22px;
 	list-style-type: disc;
