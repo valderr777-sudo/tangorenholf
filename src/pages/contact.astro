@@ -25,10 +25,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 			</div>
 
 			<div class="contact-form__row">
-				<label class="contact-form__field">
-					<span>Email</span>
-					<input type="email" name="email" autocomplete="email" />
-				</label>
+			<label class="contact-form__field">
+				<span>Email*</span>
+				<input type="email" name="email" autocomplete="email" required />
+			</label>
 				<label class="contact-form__field">
 					<span>Phone*</span>
 					<input type="tel" name="phone" autocomplete="tel" required />
@@ -45,7 +45,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 				<p class="contact-form__status" id="contact-form-status" hidden></p>
 			</div>
 		</form>
-		<p class="contact-email">Email art@tangorenholf.com</p>
+		<p class="contact-email"><a href="mailto:art@tangorenholf.com" class="contact-email__link">art@tangorenholf.com</a></p>
 
 		<div class="contact-socials">
 			<a class="contact-social" href="https://www.facebook.com/profile.php?id=61581501545171" aria-label="Facebook" target="_blank" rel="noopener noreferrer">

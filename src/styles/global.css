@@ -11,7 +11,7 @@
 :root {
 	--color-primary: #FFFFFF;
 	--color-secondary: #1A1A1A;
-	--color-accent: #C8392B;
+	--color-accent: #e1251b;
 	--color-neutral: #F2F2F2;
 	--color-overlay: rgba(0, 0, 0, 0.18);
 	/* --color-header-bg: rgba(255, 255, 255, 0.6); */
@@ -57,7 +57,7 @@ html.home-document {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background: #A82F24;
+	background: #e1251b;
 }
 
 ::view-transition-old(root),
@@ -490,7 +490,7 @@ p {
 	justify-content: center;
 	align-items: center;
 	min-height: calc(100vh - 180px);
-	padding: clamp(44px, 7vh, 88px) clamp(18px, 5vw, 72px);
+	padding: clamp(32px, 5vh, 56px) clamp(18px, 5vw, 72px);
 	background: var(--color-primary);
 	color: var(--color-secondary);
 }
@@ -501,7 +501,7 @@ p {
 
 .services-grid__heading {
 	max-width: none;
-	margin: 0 0 clamp(24px, 3vh, 40px);
+	margin: 0 0 clamp(36px, 5vh, 64px);
 	font-size: clamp(1.25rem, 2vw, 1.55rem);
 	font-weight: 400;
 	letter-spacing: 0.2em;
@@ -649,8 +649,8 @@ p {
 }
 
 .contact-form button {
-	padding: 0;
-	font-size: 0.75rem;
+	padding: 4px 0;
+	font-size: 0.9rem;
 	letter-spacing: 0.25em;
 	text-transform: uppercase;
 }
@@ -668,6 +668,11 @@ p {
 	font-size: 0.95rem;
 	letter-spacing: 0;
 	text-align: center;
+}
+
+.contact-email__link {
+	text-decoration: none;
+	color: inherit;
 }
 
 .contact-socials {
