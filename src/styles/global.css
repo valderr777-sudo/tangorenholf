@@ -459,7 +459,7 @@ p {
 
 .about-copy h1 {
 	max-width: none;
-	margin: 0 0 clamp(36px, 5vh, 64px);
+	margin: 0 0 clamp(32px, 5vh, 56px);
 	font-size: clamp(1.25rem, 2vw, 1.55rem);
 	font-weight: 400;
 	letter-spacing: 0;
@@ -501,7 +501,7 @@ p {
 
 .services-grid__heading {
 	max-width: none;
-	margin: 0 0 clamp(36px, 5vh, 64px);
+	margin: 0 0 clamp(32px, 5vh, 56px);
 	font-size: clamp(1.25rem, 2vw, 1.55rem);
 	font-weight: 400;
 	letter-spacing: 0.2em;
