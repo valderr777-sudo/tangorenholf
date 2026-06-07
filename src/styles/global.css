@@ -444,64 +444,30 @@ p {
 	line-height: 1.9;
 }
 
-.about-page {
+/* ── Shared page layout for ABOUT & CLIENT SERVICES ── */
+
+.page-section {
+	--page-body-height: clamp(360px, 45vh, 500px);
 	display: grid;
-	place-items: start center;
-	min-height: auto;
-	padding: clamp(48px, 6vh, 72px) clamp(18px, 5vw, 72px) clamp(48px, 6vh, 72px);
-	background: var(--color-primary);
-	color: var(--color-secondary);
-}
-
-.about-copy {
-	width: min(100%, 940px);
-}
-
-.about-copy h1 {
-	max-width: none;
-	margin: 0 0 clamp(24px, 3vh, 40px);
-	font-size: clamp(1.25rem, 2vw, 1.55rem);
-	font-weight: 400;
-	letter-spacing: 0;
-	line-height: 1.2;
-	text-align: center;
-	text-transform: uppercase;
-}
-
-.about-copy p {
-	max-width: none;
-	margin: 0 0 clamp(14px, 2vh, 24px);
-	font-size: clamp(0.85rem, 1vw, 0.95rem);
-	font-weight: 400;
-	letter-spacing: 0;
-	line-height: 1.55;
-}
-
-.about-copy p:last-child {
-	margin-bottom: 0;
-}
-
-.about-copy span {
-	color: var(--color-accent);
-}
-
-.services-page {
-	display: flex;
-	justify-content: center;
-	align-items: start;
+	place-items: center;
 	min-height: calc(100vh - 180px);
-	padding: clamp(48px, 6vh, 72px) clamp(18px, 5vw, 72px) clamp(48px, 6vh, 72px);
+	padding: 0 clamp(18px, 5vw, 72px);
 	background: var(--color-primary);
 	color: var(--color-secondary);
 }
 
-.services-grid {
-	width: min(100%, 950px);
+.page-content {
+	display: grid;
+	grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr) var(--page-body-height) minmax(0, 1fr);
+	width: min(100%, 940px);
+	min-height: calc(100vh - 180px);
 }
 
-.services-grid__heading {
+.page-heading {
+	grid-row: 2;
+	align-self: center;
 	max-width: none;
-	margin: 0 0 clamp(48px, 6vh, 72px);
+	margin: 0;
 	font-size: clamp(1.25rem, 2vw, 1.55rem);
 	font-weight: 400;
 	letter-spacing: 0.2em;
@@ -510,24 +476,66 @@ p {
 	text-transform: uppercase;
 }
 
-.services-grid__items {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: clamp(14px, 1.8vh, 22px) clamp(24px, 3vw, 56px);
-	margin: 0;
-	padding: 0 0 0 22px;
-	list-style-type: disc;
-	list-style-position: outside;
+.page-body {
+	grid-row: 4;
+	display: flex;
+	flex-direction: column;
+	height: var(--page-body-height);
+	min-height: 0;
 }
 
-.services-grid__item {
-	display: list-item;
+/* ── Text variant (ABOUT) ── */
+
+.page-body--text {
+	justify-content: space-between;
+}
+
+.page-body--text p {
+	max-width: none;
+	margin: 0;
 	font-size: clamp(0.85rem, 1vw, 0.95rem);
 	font-weight: 400;
 	letter-spacing: 0;
 	line-height: 1.55;
-	min-height: auto;
+}
+
+.page-body--text span {
+	color: var(--color-accent);
+}
+
+/* ── List variant (CLIENT SERVICES) ── */
+
+.page-body--list {
+	justify-content: stretch;
+}
+
+.services-list {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	align-content: space-between;
+	column-gap: clamp(24px, 3vw, 56px);
+	row-gap: 0;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	height: 100%;
+}
+
+.services-list__item {
+	position: relative;
+	padding-left: 18px;
+	font-size: clamp(0.85rem, 1vw, 0.95rem);
+	font-weight: 400;
+	letter-spacing: 0;
+	line-height: 1.55;
 	white-space: nowrap;
+}
+
+.services-list__item::before {
+	content: "•";
+	position: absolute;
+	left: 0;
+	color: var(--color-secondary);
 }
 
 .collection-gallery {
@@ -812,17 +820,21 @@ p {
 		gap: 8px;
 	}
 
-	.services-grid__items {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
+	.services-list__item {
+		white-space: normal;
 	}
 }
 
 @media (max-width: 640px) {
-	.services-grid__items {
+	.page-section {
+		--page-body-height: clamp(640px, 92vh, 780px);
+	}
+
+	.services-list {
 		grid-template-columns: 1fr;
 	}
 
-	.services-grid__item {
+	.services-list__item {
 		white-space: normal;
 	}
 }
