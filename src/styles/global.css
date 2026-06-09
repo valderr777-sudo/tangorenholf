@@ -842,8 +842,18 @@ p {
 
 	.content-section,
 	.contact-panel {
-		padding-right: 24px;
-		padding-left: 24px;
+		--mobile-title-gap: clamp(44px, 8vh, 72px);
+		display: block;
+		min-height: calc(100dvh - 180px);
+		padding: var(--mobile-title-gap) 24px var(--mobile-title-gap);
+	}
+
+	.contact-heading {
+		margin: 0 0 var(--mobile-title-gap);
+	}
+
+	.contact-form {
+		margin: 0 auto;
 	}
 
 	.contact-form__row {
@@ -854,6 +864,13 @@ p {
 		align-items: flex-start;
 		flex-direction: column;
 		gap: 8px;
+	}
+
+	.contact-socials {
+		display: flex;
+		width: fit-content;
+		margin-right: auto;
+		margin-left: auto;
 	}
 
 	.services-list__item {
